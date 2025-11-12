@@ -1,0 +1,603 @@
+{
+    "success": true,
+    "message": "ดึงข้อมูลหมวดหมู่สำเร็จ",
+    "categories": [
+        {
+            "category_id": 1,
+            "name": "Electronics",
+            "slug": "electronics",
+            "icon": "📱",
+            "parent_id": null,
+            "display_order": 1,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 7,
+                    "name": "Phones",
+                    "slug": "phones",
+                    "icon": null,
+                    "parent_id": 1,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 8,
+                    "name": "Laptops",
+                    "slug": "laptops",
+                    "icon": null,
+                    "parent_id": 1,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 9,
+                    "name": "Cameras",
+                    "slug": "cameras",
+                    "icon": null,
+                    "parent_id": 1,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 10,
+                    "name": "Gaming",
+                    "slug": "gaming",
+                    "icon": null,
+                    "parent_id": 1,
+                    "display_order": 4,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 11,
+                    "name": "Tablets",
+                    "slug": "tablets",
+                    "icon": null,
+                    "parent_id": 1,
+                    "display_order": 5,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        },
+        {
+            "category_id": 2,
+            "name": "Home & Living",
+            "slug": "home-living",
+            "icon": "🏠",
+            "parent_id": null,
+            "display_order": 3,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 12,
+                    "name": "Furniture",
+                    "slug": "furniture",
+                    "icon": null,
+                    "parent_id": 2,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 13,
+                    "name": "Appliances",
+                    "slug": "appliances",
+                    "icon": null,
+                    "parent_id": 2,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 14,
+                    "name": "Home Decor",
+                    "slug": "home-decor",
+                    "icon": null,
+                    "parent_id": 2,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 15,
+                    "name": "Kitchen",
+                    "slug": "kitchen",
+                    "icon": null,
+                    "parent_id": 2,
+                    "display_order": 4,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 16,
+                    "name": "Garden",
+                    "slug": "garden",
+                    "icon": null,
+                    "parent_id": 2,
+                    "display_order": 5,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        },
+        {
+            "category_id": 3,
+            "name": "Fashion",
+            "slug": "fashion",
+            "icon": "👕",
+            "parent_id": null,
+            "display_order": 4,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 17,
+                    "name": "Clothing",
+                    "slug": "clothing",
+                    "icon": null,
+                    "parent_id": 3,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 18,
+                    "name": "Shoes",
+                    "slug": "shoes",
+                    "icon": null,
+                    "parent_id": 3,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 19,
+                    "name": "Bags",
+                    "slug": "bags",
+                    "icon": null,
+                    "parent_id": 3,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 20,
+                    "name": "Accessories",
+                    "slug": "accessories",
+                    "icon": null,
+                    "parent_id": 3,
+                    "display_order": 4,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 21,
+                    "name": "Watches",
+                    "slug": "watches",
+                    "icon": null,
+                    "parent_id": 3,
+                    "display_order": 5,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        },
+        {
+            "category_id": 4,
+            "name": "Sports & Hobbies",
+            "slug": "sports-hobbies",
+            "icon": "⚽",
+            "parent_id": null,
+            "display_order": 5,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 22,
+                    "name": "Sports Equipment",
+                    "slug": "sports-equipment",
+                    "icon": null,
+                    "parent_id": 4,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 23,
+                    "name": "Fitness",
+                    "slug": "fitness",
+                    "icon": null,
+                    "parent_id": 4,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 24,
+                    "name": "Musical Instruments",
+                    "slug": "musical-instruments",
+                    "icon": null,
+                    "parent_id": 4,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 25,
+                    "name": "Art & Crafts",
+                    "slug": "art-crafts",
+                    "icon": null,
+                    "parent_id": 4,
+                    "display_order": 4,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        },
+        {
+            "category_id": 5,
+            "name": "Books & Media",
+            "slug": "books-media",
+            "icon": "📚",
+            "parent_id": null,
+            "display_order": 6,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 26,
+                    "name": "Books",
+                    "slug": "books",
+                    "icon": null,
+                    "parent_id": 5,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 27,
+                    "name": "Movies & Music",
+                    "slug": "movies-music",
+                    "icon": null,
+                    "parent_id": 5,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 28,
+                    "name": "Games",
+                    "slug": "games",
+                    "icon": null,
+                    "parent_id": 5,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        },
+        {
+            "category_id": 6,
+            "name": "Services",
+            "slug": "services",
+            "icon": "🛠️",
+            "parent_id": null,
+            "display_order": 8,
+            "is_active": true,
+            "subcategories": [
+                {
+                    "category_id": 29,
+                    "name": "Home Services",
+                    "slug": "home-services",
+                    "icon": null,
+                    "parent_id": 6,
+                    "display_order": 1,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 30,
+                    "name": "Tutoring",
+                    "slug": "tutoring",
+                    "icon": null,
+                    "parent_id": 6,
+                    "display_order": 2,
+                    "is_active": true,
+                    "subcategories": []
+                },
+                {
+                    "category_id": 31,
+                    "name": "Beauty & Wellness",
+                    "slug": "beauty-wellness",
+                    "icon": null,
+                    "parent_id": 6,
+                    "display_order": 3,
+                    "is_active": true,
+                    "subcategories": []
+                }
+            ]
+        }
+    ],
+    "flat": [
+        {
+            "category_id": 26,
+            "name": "Books",
+            "slug": "books",
+            "icon": null,
+            "parent_id": 5,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 17,
+            "name": "Clothing",
+            "slug": "clothing",
+            "icon": null,
+            "parent_id": 3,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 1,
+            "name": "Electronics",
+            "slug": "electronics",
+            "icon": "📱",
+            "parent_id": null,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 12,
+            "name": "Furniture",
+            "slug": "furniture",
+            "icon": null,
+            "parent_id": 2,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 29,
+            "name": "Home Services",
+            "slug": "home-services",
+            "icon": null,
+            "parent_id": 6,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 7,
+            "name": "Phones",
+            "slug": "phones",
+            "icon": null,
+            "parent_id": 1,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 22,
+            "name": "Sports Equipment",
+            "slug": "sports-equipment",
+            "icon": null,
+            "parent_id": 4,
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "category_id": 13,
+            "name": "Appliances",
+            "slug": "appliances",
+            "icon": null,
+            "parent_id": 2,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 23,
+            "name": "Fitness",
+            "slug": "fitness",
+            "icon": null,
+            "parent_id": 4,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 8,
+            "name": "Laptops",
+            "slug": "laptops",
+            "icon": null,
+            "parent_id": 1,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 27,
+            "name": "Movies & Music",
+            "slug": "movies-music",
+            "icon": null,
+            "parent_id": 5,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 18,
+            "name": "Shoes",
+            "slug": "shoes",
+            "icon": null,
+            "parent_id": 3,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 30,
+            "name": "Tutoring",
+            "slug": "tutoring",
+            "icon": null,
+            "parent_id": 6,
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "category_id": 19,
+            "name": "Bags",
+            "slug": "bags",
+            "icon": null,
+            "parent_id": 3,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 31,
+            "name": "Beauty & Wellness",
+            "slug": "beauty-wellness",
+            "icon": null,
+            "parent_id": 6,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 9,
+            "name": "Cameras",
+            "slug": "cameras",
+            "icon": null,
+            "parent_id": 1,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 28,
+            "name": "Games",
+            "slug": "games",
+            "icon": null,
+            "parent_id": 5,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 2,
+            "name": "Home & Living",
+            "slug": "home-living",
+            "icon": "🏠",
+            "parent_id": null,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 14,
+            "name": "Home Decor",
+            "slug": "home-decor",
+            "icon": null,
+            "parent_id": 2,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 24,
+            "name": "Musical Instruments",
+            "slug": "musical-instruments",
+            "icon": null,
+            "parent_id": 4,
+            "display_order": 3,
+            "is_active": true
+        },
+        {
+            "category_id": 20,
+            "name": "Accessories",
+            "slug": "accessories",
+            "icon": null,
+            "parent_id": 3,
+            "display_order": 4,
+            "is_active": true
+        },
+        {
+            "category_id": 25,
+            "name": "Art & Crafts",
+            "slug": "art-crafts",
+            "icon": null,
+            "parent_id": 4,
+            "display_order": 4,
+            "is_active": true
+        },
+        {
+            "category_id": 3,
+            "name": "Fashion",
+            "slug": "fashion",
+            "icon": "👕",
+            "parent_id": null,
+            "display_order": 4,
+            "is_active": true
+        },
+        {
+            "category_id": 10,
+            "name": "Gaming",
+            "slug": "gaming",
+            "icon": null,
+            "parent_id": 1,
+            "display_order": 4,
+            "is_active": true
+        },
+        {
+            "category_id": 15,
+            "name": "Kitchen",
+            "slug": "kitchen",
+            "icon": null,
+            "parent_id": 2,
+            "display_order": 4,
+            "is_active": true
+        },
+        {
+            "category_id": 16,
+            "name": "Garden",
+            "slug": "garden",
+            "icon": null,
+            "parent_id": 2,
+            "display_order": 5,
+            "is_active": true
+        },
+        {
+            "category_id": 4,
+            "name": "Sports & Hobbies",
+            "slug": "sports-hobbies",
+            "icon": "⚽",
+            "parent_id": null,
+            "display_order": 5,
+            "is_active": true
+        },
+        {
+            "category_id": 11,
+            "name": "Tablets",
+            "slug": "tablets",
+            "icon": null,
+            "parent_id": 1,
+            "display_order": 5,
+            "is_active": true
+        },
+        {
+            "category_id": 21,
+            "name": "Watches",
+            "slug": "watches",
+            "icon": null,
+            "parent_id": 3,
+            "display_order": 5,
+            "is_active": true
+        },
+        {
+            "category_id": 5,
+            "name": "Books & Media",
+            "slug": "books-media",
+            "icon": "📚",
+            "parent_id": null,
+            "display_order": 6,
+            "is_active": true
+        },
+        {
+            "category_id": 6,
+            "name": "Services",
+            "slug": "services",
+            "icon": "🛠️",
+            "parent_id": null,
+            "display_order": 8,
+            "is_active": true
+        }
+    ]
+}
