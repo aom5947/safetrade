@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
+import { Card, CardContent, CardHeader } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 import { Loading } from '../../components/ui/Loading';
 import { EmptyState } from '../../components/common/EmptyState';
 import reviewService from '../../services/reviewService';
