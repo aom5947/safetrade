@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
+
+// UI components (ตัวเล็กทั้งหมด ให้ตรงกับชื่อไฟล์ใน Linux)
 import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/card';
 import { Button } from '@/components/Admin_components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/table';
-import { Loading } from '@/components/Admin_components/ui/Loading';
-import { EmptyState } from '../../components/common/EmptyState';
-import reviewService from '../../services/reviewService';
+import Loading from '@/components/Admin_components/ui/loading'; // ถ้าไฟล์ export เป็น default
 
-
+// ส่วนอื่น ๆ ใช้ alias ให้หมด เพื่อตัดปัญหา ../ นับชั้น
+import { EmptyState } from '@/components/common/EmptyState';
+import reviewService from '@/services/reviewService';
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -41,9 +43,7 @@ const ReviewsPage = () => {
     }
   };
 
-  const renderStars = (rating) => {
-    return '⭐'.repeat(rating);
-  };
+  const renderStars = (rating) => '⭐'.repeat(rating);
 
   return (
     <div className="space-y-6">
