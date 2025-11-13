@@ -2,13 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Flag, AlertCircle, Users, Package, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/Card';
-import { Button } from '@/components/Admin_components/ui/Button';
-import { Badge } from '@/components/Admin_components/ui/Badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/Table';
+// ✅ ui: ใช้ชื่อไฟล์ตัวเล็ก (card.jsx, button.jsx, badge.jsx, table.jsx, select.jsx)
+import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/card';
+import { Button } from '@/components/Admin_components/ui/button';
+import { Badge } from '@/components/Admin_components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/Admin_components/ui/table';
+import { Select } from '@/components/Admin_components/ui/select';
+
+// ✅ Components ที่อยู่นอก ui
 import { Loading } from '@/components/Admin_components/Loading';
 import { EmptyState } from '@/components/Admin_components/EmptyState';
-import { Select } from '@/components/Admin_components/ui/Select';
+
 import { getStatusColor, getStatusDisplayName, formatDate } from '@/lib/utils';
 import { api } from '@/services/api';
 import { StatCard } from '../Dashboard/DashboardPage';
@@ -20,7 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/Admin_components/ui/dialog"
+} from '@/components/Admin_components/ui/dialog';
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
