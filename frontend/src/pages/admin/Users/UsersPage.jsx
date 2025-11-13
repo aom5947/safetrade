@@ -1,24 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { Search } from "lucide-react";
+import { toast } from "sonner";
 
-// ✅ UI: ใช้ตัวเล็กทั้งหมดให้ตรงกับไฟล์จริงใน Admin_components/ui
-import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/card';
-import { Input } from '@/components/Admin_components/ui/input';
-import { Button } from '@/components/Admin_components/ui/button';
-import { Badge } from '@/components/Admin_components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/table';
-import Loading from '@/components/Admin_components/ui/loading';
+// ✅ UI: ใช้ตัวเล็กให้ตรงกับไฟล์ใน Admin_components/ui
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@/components/Admin_components/ui/card";
+import { Input } from "@/components/Admin_components/ui/input";
+import { Button } from "@/components/Admin_components/ui/button";
+import { Badge } from "@/components/Admin_components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/Admin_components/ui/table";
 
-// ✅ EmptyState อยู่ใน common (เหมือนหน้าอื่น ๆ)
-import { EmptyState } from '@/components/common/EmptyState';
+// ✅ ใช้ Loading / EmptyState จาก Admin_components (ไม่ใช่ common)
+import { Loading } from "@/components/Admin_components/Loading";
+import { EmptyState } from "@/components/Admin_components/EmptyState";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/Admin_components/ui/select"
+} from '@/components/Admin_components/ui/select';
+
 import {
   Dialog,
   DialogContent,
@@ -26,9 +38,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/Admin_components/ui/dialog"
+} from '@/components/Admin_components/ui/dialog';
 
-// import userService from '../../services/userService';
 import { getRoleColor, getRoleDisplayName, getStatusColor, getStatusDisplayName } from '@/lib/utils';
 import { api } from '@/services/api';
 
