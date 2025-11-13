@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/Card';
-import { Input } from '@/components/Admin_components/ui/Input';
-import { Button } from '@/components/Admin_components/ui/Button';
-import { Badge } from '@/components/Admin_components/ui/Badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/Table';
-import { Loading } from '@/components/Admin_components/Loading';
-import { EmptyState } from '@/components/Admin_components/EmptyState';
+
+// ✅ UI: ใช้ตัวเล็กทั้งหมดให้ตรงกับไฟล์จริงใน Admin_components/ui
+import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/card';
+import { Input } from '@/components/Admin_components/ui/input';
+import { Button } from '@/components/Admin_components/ui/button';
+import { Badge } from '@/components/Admin_components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/table';
+import Loading from '@/components/Admin_components/ui/loading';
+
+// ✅ EmptyState อยู่ใน common (เหมือนหน้าอื่น ๆ)
+import { EmptyState } from '@/components/common/EmptyState';
 import {
   Select,
   SelectContent,
