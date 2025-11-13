@@ -1,17 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Folder, Plus, ChevronDown, ChevronRight, Edit2, Trash2, Save, X } from 'lucide-react';
+import {
+  Folder,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Edit2,
+  Trash2,
+  Save,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
-import { Card, CardContent } from '@/components/Admin_components/ui/Card';
-import { Button } from '@/components/Admin_components/ui/Button';
-import { Badge } from '@/components/Admin_components/ui/Badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/Table';
+
+// ✅ ui/* = ชื่อไฟล์ตัวเล็ก (card.jsx, button.jsx, badge.jsx, table.jsx, input.jsx)
+import { Card, CardContent } from '@/components/Admin_components/ui/card';
+import { Button } from '@/components/Admin_components/ui/button';
+import { Badge } from '@/components/Admin_components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/Admin_components/ui/table';
+import { Input } from '@/components/Admin_components/ui/input';
+
+// ✅ Components ที่อยู่นอก ui (ใช้ตามที่มีอยู่จริง)
 import { Loading } from '@/components/Admin_components/Loading';
 import { EmptyState } from '@/components/Admin_components/EmptyState';
+
+// ✅ Modal อยู่ใน ui แต่ไฟล์ชื่อ Modal.jsx (M ใหญ่)
 import { Modal } from '@/components/Admin_components/ui/Modal';
-import { Input } from '@/components/Admin_components/ui/Input';
+
 import { useForm } from 'react-hook-form';
 import { api } from '@/services/api';
+
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
