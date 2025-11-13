@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import ChatModal from "./chat/ChatModal";
-import NavbarLogo from "./navbar/NavbarLogo";
-import NavbarLinks from "./navbar/NavbarLinks";
-import NavbarActions from "./navbar/NavbarActions";
-import MobileDrawer from "./navbar/MobileDrawer";
+import NavbarLogo from "./Navbar/NavbarLogo";
+import NavbarLinks from "./Navbar/NavbarLinks";
+import NavbarActions from "./Navbar/NavbarActions";
+import MobileDrawer from "./Navbar/MobileDrawer";
 
 function Navbar({ role }) {
   const [menuOpen, setMenuOpen] = useState(false);
