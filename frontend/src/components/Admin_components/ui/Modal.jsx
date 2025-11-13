@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Button } from '@/components/Admin_components/ui/Button';
+import { Button } from '@/components/Admin_components/ui/button';
 import { cn } from '@/lib/utils';
 
 const Modal = ({ isOpen, onClose, children, title, size = 'default' }) => {
