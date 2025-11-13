@@ -19,7 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { AlertCircle, BarChart2, ChevronDown, ChevronRight, ChevronUp, CreditCard, FileText, LayoutDashboard, User, User2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
-import { Button } from "@/components/Admin_components/ui/Button";
+import { Button } from "@/components/Admin_components/ui/button";
 
 
 // const menuItems = [
