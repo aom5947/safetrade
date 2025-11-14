@@ -3,18 +3,16 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * ✅ AdsenseAd Component (React 19+, Tailwind-ready)
- * รองรับการใช้งานในเว็บแบบ SPA (Single Page App)
- * โหลด script ครั้งเดียว + re-render โฆษณาเมื่อ route เปลี่ยน
+ * AdsenseAd Component
+ * ใช้แสดงโฆษณา AdSense ในเว็บแบบ SPA
  *
  * Props:
- *  - client: string   // เช่น "ca-pub-XXXXXXXXXXXX"
- *  - slot: string     // หมายเลข ad slot จากบัญชี AdSense
- *  - className: string (optional)  // Tailwind classes ของ container
- *  - style: object (optional)      // inline style ของ <ins>
- *  - format: string (optional)     // เช่น "auto" หรือ "rectangle"
+ *  - client: string   // เช่น "ca-pub-1824806465207098"
+ *  - slot: string     // หมายเลข ad slot
+ *  - className: string (optional)
+ *  - style: object (optional)
+ *  - format: string (optional)
  */
-
 export default function AdsenseAd({
   client,
   slot,
@@ -26,7 +24,7 @@ export default function AdsenseAd({
   const containerRef = useRef(null);
   const pushedRef = useRef(false);
 
-  // โหลดสคริปต์ AdSense แค่ครั้งเดียว
+  // โหลดสคริปต์ AdSense แค่ครั้งเดียว (เหมือนโค้ดในรูป)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -34,10 +32,10 @@ export default function AdsenseAd({
     if (!document.getElementById(SCRIPT_ID)) {
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
-      script.src =
-        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
       script.async = true;
-      script.setAttribute("data-ad-client", client);
+      // ❗ ใช้รูปแบบเดียวกับที่ Google ให้มา: ?client=... + crossorigin="anonymous"
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
+      script.crossOrigin = "anonymous";
       document.head.appendChild(script);
     }
   }, [client]);
@@ -49,7 +47,7 @@ export default function AdsenseAd({
     const adElement = containerRef.current?.querySelector("ins.adsbygoogle");
     if (!adElement) return;
 
-    // clone node เพื่อรี render
+    // clone node เพื่อให้ adsbygoogle push ได้ใหม่
     const clone = adElement.cloneNode(false);
     adElement.parentNode?.replaceChild(clone, adElement);
 
@@ -77,7 +75,7 @@ export default function AdsenseAd({
       <ins
         className="adsbygoogle"
         style={style}
-        data-ad-client={client}
+        data-ad-client={client}  // ca-pub-XXXX จากรูป
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive="true"

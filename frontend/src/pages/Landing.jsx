@@ -116,12 +116,13 @@ function Landing({ setToken, user, setUsers, setRole, role }) {
             <div className="px-4 py-2 text-[11px] uppercase tracking-wide text-slate-500/80">โฆษณา</div>
             <div className="px-2 pb-4">
               <AdsenseAd
-                 client="ca-pub-1234567890123456"  // ของจริงจากบัญชี AdSense
-                  slot="9876543210"
+                client="ca-pub-1824806465207098"   // เอาจากรูปที่ AdSense ให้
+                 slot="9876543210"                 // ตอนนี้จะใช้ slot mock ก็ได้ หรือเอาจาก AdSense ก็ได้
                 className="w-full"
                 style={{ display: "block", minHeight: 90 }}
                 format="auto"
               />
+
             </div>
           </div>
         </div>
