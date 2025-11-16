@@ -4,9 +4,23 @@ import Button from "../../components/Button";
 
 function Signup({ onContinue, onSwitch }) {
   const [mobile, setMobile] = useState("");
+  const [accept, setAccept] = useState(false); // ✅ checkbox ยอมรับเงื่อนไข
 
   const handleSignup = () => {
+    // เช็คเบื้องต้น
+    if (!mobile.trim()) {
+      alert("กรุณากรอกเบอร์มือถือ");
+      return;
+    }
+    if (!accept) {
+      alert("กรุณายอมรับ Terms of Service และ Privacy Policy");
+      return;
+    }
 
+    // ✅ แจ้ง parent ให้เปลี่ยนไปหน้า ProfileSetup
+    if (onContinue) {
+      onContinue(mobile);    // จะส่งเบอร์ไปใช้ต่อ หรือไม่ใช้ก็ได้
+    }
   };
 
   return (
@@ -21,7 +35,12 @@ function Signup({ onContinue, onSwitch }) {
       />
 
       <div className="flex items-start gap-2 mt-4 text-sm">
-        <input type="checkbox" className="mt-1" />
+        <input
+          type="checkbox"
+          className="mt-1"
+          checked={accept}
+          onChange={(e) => setAccept(e.target.checked)}
+        />
         <span>
           I have read and agree to{" "}
           <a href="#" className="text-blue-600 hover:underline">

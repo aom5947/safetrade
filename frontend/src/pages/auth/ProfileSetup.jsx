@@ -1,7 +1,8 @@
+// frontend/src/pages/auth/ProfileSetup.jsx
 import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { saveUser } from "../../services/authService";
+import { api } from "@/services/api";   // ✅ ใช้ axios instance ตัวเดียวกับ Login
 
 function ProfileSetup({ onFinish }) {
   const [form, setForm] = useState({
@@ -15,42 +16,71 @@ function ProfileSetup({ onFinish }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" }); // ✅ เคลียร์ error เมื่อพิมพ์
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let newErrors = {};
 
     if (!form.email) newErrors.email = "E-mail is required";
     if (!form.password) newErrors.password = "Password is required";
     if (!form.confirmPassword) newErrors.confirmPassword = "Confirm your password";
-    if (form.password !== form.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    if (form.password !== form.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
     if (!form.username) newErrors.username = "Username is required";
     if (!form.firstName) newErrors.firstName = "First name is required";
     if (!form.lastName) newErrors.lastName = "Last name is required";
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) {
       return; // ❌ ถ้ามี error จะไม่บันทึก
     }
 
-    const user = {
+    // ✅ payload ต้องตรงกับ route /signup ใน backend
+    const payload = {
       email: form.email,
       password: form.password,
       username: form.username,
-      firstName: form.firstName,
-      lastName: form.lastName,
-      role: form.role,
+      first_name: form.firstName,
+      last_name: form.lastName,
+      role: form.role, // buyer หรือ seller
     };
 
-    saveUser(user);
-    console.log("Profile created:", user);
+    try {
+      setLoading(true);
 
-    if (onFinish) onFinish(user);
+      const res = await api.post("/users/signup", payload);
+
+      alert(res.data?.message || "Signup success");
+
+      // ถ้าอยากส่งข้อมูล user/id กลับให้ parent ใช้ onFinish
+      if (onFinish) {
+        onFinish({
+          id: res.data?.id,
+          email: form.email,
+          username: form.username,
+          role: form.role,
+        });
+      }
+    } catch (err) {
+      console.error("Signup failed:", err.response?.data || err.message);
+
+      const msg = err.response?.data?.message || "Signup failed";
+
+      alert(msg);
+
+      // ถ้า backend ส่ง 400 มา แสดงว่ามี validation ผิด เช่น role ผิด, email ซ้ำ ฯลฯ
+      if (err.response?.status === 400 || err.response?.status === 403) {
+        // ถ้าจะ map message ลง field ก็ทำเพิ่มได้
+        // ตอนนี้โชว์เป็น alert ไปก่อน
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,7 +119,9 @@ function ProfileSetup({ onFinish }) {
           onChange={handleChange}
           className={`border ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`}
         />
-        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+        )}
 
         {/* Username */}
         <Input
@@ -113,7 +145,9 @@ function ProfileSetup({ onFinish }) {
               onChange={handleChange}
               className={`border ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
             />
-            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            {errors.firstName && (
+              <p className="text-red-500 text-sm">{errors.firstName}</p>
+            )}
           </div>
           <div className="flex-1">
             <Input
@@ -124,7 +158,9 @@ function ProfileSetup({ onFinish }) {
               onChange={handleChange}
               className={`border ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
             />
-            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            {errors.lastName && (
+              <p className="text-red-500 text-sm">{errors.lastName}</p>
+            )}
           </div>
         </div>
 
@@ -155,8 +191,8 @@ function ProfileSetup({ onFinish }) {
 
       {/* Buttons */}
       <div className="mt-6 space-y-3">
-        <Button variant="primary" onClick={handleSubmit}>
-          Create account
+        <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Creating..." : "Create account"}
         </Button>
         <Button variant="secondary">Later</Button>
       </div>
@@ -165,4 +201,3 @@ function ProfileSetup({ onFinish }) {
 }
 
 export default ProfileSetup;
-
