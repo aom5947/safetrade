@@ -194,21 +194,25 @@ export default function SellerContactCard({ product, copyToClipboard, copied }) 
                         {contactInfo.sellerName.charAt(0).toUpperCase()}
                     </div>
                     
-                    {/* ข้อมูลผู้ขาย */}
-                    <div>
+                
+                   {/* ข้อมูลผู้ขาย */}
+                        <div>
                         <p>ลงขายโดย</p>
                         <p className="font-semibold">
                             {contactInfo.sellerName}-{product.seller_last_name}
                         </p>
                         <p className="text-xs text-gray-500">
                             @{contactInfo.sellerUsername}
-                            {contactInfo.sellerRating > 0 && (
+
+                            {/* ⭐ แสดงเรตติ้งแบบปลอดภัย */}
+                            {parseFloat(contactInfo.sellerRating) > 0 && (
                                 <span className="ml-2">
-                                    ⭐ {contactInfo.sellerRating.toFixed(1)}
+                                    ⭐ {parseFloat(contactInfo.sellerRating).toFixed(1)}
                                 </span>
                             )}
                         </p>
                     </div>
+
                 </div>
             </Link>
 
