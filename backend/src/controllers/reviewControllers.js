@@ -156,8 +156,8 @@ export const getSellerReviews = async (sellerId, limit = 50, offset = 0, include
     // Get total count
     const countSql = `
       SELECT COUNT(*) as total
-      FROM reviews
-      WHERE reviewed_user_id = $1 ${spamFilter}
+      FROM reviews r
+      WHERE r.reviewed_user_id = $1 ${spamFilter}
     `
     const countResult = await query(countSql, [sellerId])
     const totalCount = parseInt(countResult.rows[0].total)
@@ -333,6 +333,115 @@ export const markReviewAsSpam = async (reviewId, isSpam = true) => {
     throw error
   } finally {
     client.release()
+  }
+}
+
+/**
+ * Get all reviews (admin only)
+ * @param {number} [limit=50] - Number of reviews to return
+ * @param {number} [offset=0] - Offset for pagination
+ * @param {boolean} [includeSpam=true] - Include spam reviews (default true for admin)
+ * @param {string} [searchTerm] - Search term for reviewer username, listing title, or comment
+ * @returns {Promise<Object>} Result with all reviews
+ */
+export const getAllReviews = async (limit = 50, offset = 0, includeSpam = true, searchTerm = null) => {
+  try {
+    const spamFilter = includeSpam ? '' : 'AND r.is_spam = FALSE'
+
+    // Build search condition
+    let searchCondition = ''
+    let queryParams = []
+    let paramIndex = 1
+
+    if (searchTerm) {
+      searchCondition = `AND (
+        u.username ILIKE $${paramIndex} OR
+        l.title ILIKE $${paramIndex} OR
+        r.comment ILIKE $${paramIndex} OR
+        seller.username ILIKE $${paramIndex}
+      )`
+      queryParams.push(`%${searchTerm}%`)
+      paramIndex++
+    }
+
+    const sql = `
+      SELECT
+        r.review_id,
+        r.rating,
+        r.comment,
+        r.is_spam,
+        r.created_at,
+        l.listing_id,
+        l.title as listing_title,
+        l.status as listing_status,
+        u.user_id as reviewer_id,
+        u.username as reviewer_username,
+        u.first_name as reviewer_first_name,
+        u.last_name as reviewer_last_name,
+        u.avatar_url as reviewer_avatar,
+        seller.user_id as seller_id,
+        seller.username as seller_username,
+        seller.first_name as seller_first_name,
+        seller.last_name as seller_last_name,
+        seller.avatar_url as seller_avatar,
+        seller.rating_average as seller_rating_average,
+        seller.rating_count as seller_rating_count
+      FROM reviews r
+      JOIN listings l ON r.listing_id = l.listing_id
+      JOIN users u ON r.reviewer_id = u.user_id
+      JOIN users seller ON r.reviewed_user_id = seller.user_id
+      WHERE 1=1 ${spamFilter} ${searchCondition}
+      ORDER BY r.created_at DESC
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `
+
+    queryParams.push(limit, offset)
+    const result = await query(sql, queryParams)
+
+    // Get total count
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM reviews r
+      JOIN listings l ON r.listing_id = l.listing_id
+      JOIN users u ON r.reviewer_id = u.user_id
+      JOIN users seller ON r.reviewed_user_id = seller.user_id
+      WHERE 1=1 ${spamFilter} ${searchCondition}
+    `
+
+    const countParams = searchTerm ? [searchTerm] : []
+    const countResult = await query(countSql, countParams)
+    const totalCount = parseInt(countResult.rows[0].total)
+
+    // Get statistics
+    const statsResult = await query(
+      `SELECT
+         COUNT(*) as total_reviews,
+         COUNT(CASE WHEN is_spam = TRUE THEN 1 END) as spam_reviews,
+         AVG(rating) as average_rating,
+         COUNT(DISTINCT reviewed_user_id) as total_sellers_reviewed
+       FROM reviews`
+    )
+
+    return {
+      success: true,
+      reviews: result.rows,
+      statistics: {
+        totalReviews: parseInt(statsResult.rows[0].total_reviews),
+        spamReviews: parseInt(statsResult.rows[0].spam_reviews),
+        averageRating: parseFloat(statsResult.rows[0].average_rating) || 0,
+        totalSellersReviewed: parseInt(statsResult.rows[0].total_sellers_reviewed)
+      },
+      pagination: {
+        total: totalCount,
+        limit: limit,
+        offset: offset,
+        hasMore: (offset + limit) < totalCount
+      }
+    }
+
+  } catch (error) {
+    console.error('Error in getAllReviews:', error)
+    throw error
   }
 }
 

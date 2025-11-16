@@ -72,6 +72,158 @@ export const createListing = async (listingData) => {
   }
 }
 
+// /**
+//  * Get all listings with filters and pagination
+//  * @param {Object} filters - Query filters
+//  * @returns {Promise<Object>} Listings and count
+//  */
+// export const getListings = async (filters) => {
+//   const {
+//     q,
+//     categoryId,
+//     minPrice,
+//     maxPrice,
+//     location,
+//     sort = 'newest',
+//     page = 1,
+//     limit = 20,
+//     status
+//     // status = 'active'
+//   } = filters
+
+//   try {
+//     let sql = `
+//       SELECT
+//         l.*,
+//         u.username as seller_username,
+//         u.first_name as seller_first_name,
+//         u.last_name as seller_last_name,
+//         u.avatar_url as seller_avatar,
+//         u.rating_average as seller_rating,
+//         c.name as category_name,
+//         c.slug as category_slug,
+//         (SELECT image_url FROM listing_images WHERE listing_id = l.listing_id ORDER BY display_order LIMIT 1) as thumbnail
+//       FROM listings l
+//       JOIN users u ON l.seller_id = u.user_id
+//       LEFT JOIN categories c ON l.category_id = c.category_id
+//       WHERE 1=1
+//       `
+//     // WHERE l.status = $1
+
+//     const params = [status]
+//     let paramIndex = 2
+
+//     if (status) {
+//       sql += ` AND l.status = $${paramIndex}`
+//       params.push(status)
+//       paramIndex++
+//     }
+
+//     // Search by keyword
+//     if (q) {
+//       sql += ` AND (l.title ILIKE $${paramIndex} OR l.description ILIKE $${paramIndex})`
+//       params.push(`%${q}%`)
+//       paramIndex++
+//     }
+
+//     // Filter by category
+//     if (categoryId) {
+//       sql += ` AND l.category_id = $${paramIndex}`
+//       params.push(categoryId)
+//       paramIndex++
+//     }
+
+//     // Filter by price range
+//     if (minPrice) {
+//       sql += ` AND l.price >= $${paramIndex}`
+//       params.push(minPrice)
+//       paramIndex++
+//     }
+//     if (maxPrice) {
+//       sql += ` AND l.price <= $${paramIndex}`
+//       params.push(maxPrice)
+//       paramIndex++
+//     }
+
+//     // Filter by location
+//     if (location) {
+//       sql += ` AND l.location ILIKE $${paramIndex}`
+//       params.push(`%${location}%`)
+//       paramIndex++
+//     }
+
+//     // Sorting
+//     switch (sort) {
+//       case 'price_low':
+//         sql += ' ORDER BY l.price ASC'
+//         break
+//       case 'price_high':
+//         sql += ' ORDER BY l.price DESC'
+//         break
+//       case 'most_viewed':
+//         sql += ' ORDER BY l.view_count DESC'
+//         break
+//       case 'newest':
+//       default:
+//         sql += ' ORDER BY l.created_at DESC'
+//     }
+
+//     // Pagination
+//     const offset = (page - 1) * limit
+//     sql += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`
+//     params.push(limit, offset)
+
+//     const result = await query(sql, params)
+
+//     // Get total count
+//     let countSql = 'SELECT COUNT(*) FROM listings l WHERE l.status = $1'
+//     const countParams = [status]
+//     let countIndex = 2
+
+//     if (q) {
+//       countSql += ` AND (l.title ILIKE $${countIndex} OR l.description ILIKE $${countIndex})`
+//       countParams.push(`%${q}%`)
+//       countIndex++
+//     }
+//     if (categoryId) {
+//       countSql += ` AND l.category_id = $${countIndex}`
+//       countParams.push(categoryId)
+//       countIndex++
+//     }
+//     if (minPrice) {
+//       countSql += ` AND l.price >= $${countIndex}`
+//       countParams.push(minPrice)
+//       countIndex++
+//     }
+//     if (maxPrice) {
+//       countSql += ` AND l.price <= $${countIndex}`
+//       countParams.push(maxPrice)
+//       countIndex++
+//     }
+//     if (location) {
+//       countSql += ` AND l.location ILIKE $${countIndex}`
+//       countParams.push(`%${location}%`)
+//     }
+
+//     const countResult = await query(countSql, countParams)
+//     const totalCount = parseInt(countResult.rows[0].count)
+
+//     return {
+//       success: true,
+//       listings: result.rows,
+//       pagination: {
+//         page: parseInt(page),
+//         limit: parseInt(limit),
+//         totalCount,
+//         totalPages: Math.ceil(totalCount / limit)
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error getting listings:', error)
+//     throw error
+//   }
+// }
+
 /**
  * Get all listings with filters and pagination
  * @param {Object} filters - Query filters
@@ -87,8 +239,7 @@ export const getListings = async (filters) => {
     sort = 'newest',
     page = 1,
     limit = 20,
-    status = 'active'
-    // status = 'active'
+    status // ✅ เปลี่ยน: ไม่กำหนดค่า default เพื่อให้รู้ว่าส่งมาหรือไม่
   } = filters
 
   try {
@@ -106,11 +257,23 @@ export const getListings = async (filters) => {
       FROM listings l
       JOIN users u ON l.seller_id = u.user_id
       LEFT JOIN categories c ON l.category_id = c.category_id
-      WHERE l.status = $1
+      WHERE 1=1
     `
+    // ✅ เปลี่ยน: จาก WHERE l.status = $1 เป็น WHERE 1=1 
+    // เพื่อให้สามารถเพิ่ม AND conditions ได้ง่ายและไม่บังคับต้องมี status
 
-    const params = [status]
-    let paramIndex = 2
+    // ✅ เปลี่ยน: เริ่ม params ด้วย array ว่างและ paramIndex = 1
+    const params = []
+    let paramIndex = 1
+    // เดิม: const params = [status] และ let paramIndex = 2 (ผิด!)
+
+    // ✅ เพิ่ม: เช็คว่ามี status หรือไม่ก่อนเพิ่มเข้า WHERE clause
+    if (status) {
+      sql += ` AND l.status = $${paramIndex}`
+      params.push(status)
+      paramIndex++
+    }
+    // ถ้าไม่มี status จะไม่กรองตาม status = แสดงทุกสถานะ
 
     // Search by keyword
     if (q) {
@@ -168,10 +331,21 @@ export const getListings = async (filters) => {
 
     const result = await query(sql, params)
 
-    // Get total count
-    let countSql = 'SELECT COUNT(*) FROM listings l WHERE l.status = $1'
-    const countParams = [status]
-    let countIndex = 2
+    // ============ COUNT QUERY ============
+    // ✅ เปลี่ยน: จาก WHERE l.status = $1 เป็น WHERE 1=1
+    let countSql = 'SELECT COUNT(*) FROM listings l WHERE 1=1'
+    
+    // ✅ เปลี่ยน: เริ่ม countParams ด้วย array ว่างและ countIndex = 1
+    const countParams = []
+    let countIndex = 1
+    // เดิม: const countParams = [status] และ let countIndex = 2 (ผิด!)
+
+    // ✅ เพิ่ม: เช็คว่ามี status หรือไม่ก่อนเพิ่มเข้า WHERE clause
+    if (status) {
+      countSql += ` AND l.status = $${countIndex}`
+      countParams.push(status)
+      countIndex++
+    }
 
     if (q) {
       countSql += ` AND (l.title ILIKE $${countIndex} OR l.description ILIKE $${countIndex})`
@@ -362,7 +536,7 @@ export const deleteListing = async (listingId, userId, userRole) => {
  * @param {string} status - New status
  * @returns {Promise<Object>} Result
  */
-export const updateListingStatus = async (listingId, sellerId, status) => {
+export const updateListingStatus = async (listingId, userId, status, userRole) => {
   const validStatuses = ['active', 'sold', 'expired', 'hidden']
 
   if (!validStatuses.includes(status)) {
@@ -378,7 +552,9 @@ export const updateListingStatus = async (listingId, sellerId, status) => {
       return { success: false, error: 'Listing not found' }
     }
 
-    if (checkResult.rows[0].seller_id !== sellerId) {
+    const sellerId = checkResult.rows[0].seller_id
+
+    if (sellerId !== userId && userRole !== 'admin' && userRole !== 'super_admin') {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -511,6 +687,103 @@ export const deleteListingImage = async (imageId, sellerId) => {
     return { success: true, image: result.rows[0] }
   } catch (error) {
     console.error('Error deleting listing image:', error)
+    throw error
+  }
+}
+
+/**
+ * Update listing by admin (bypasses ownership check)
+ * @param {number} listingId - Listing ID
+ * @param {Object} updateData - Data to update
+ * @returns {Promise<Object>} Result
+ */
+export const updateListingByAdmin = async (listingId, updateData) => {
+  const { title, description, price, location, locationLat, locationLng, categoryId, status } = updateData
+
+  try {
+    // Check if listing exists
+    const checkSql = 'SELECT listing_id FROM listings WHERE listing_id = $1'
+    const checkResult = await query(checkSql, [listingId])
+
+    if (checkResult.rowCount === 0) {
+      return { success: false, error: 'Listing not found' }
+    }
+
+    // Validate status if provided
+    if (status) {
+      const validStatuses = ['active', 'sold', 'expired', 'hidden', 'pending']
+      if (!validStatuses.includes(status)) {
+        return { success: false, error: 'Invalid status' }
+      }
+    }
+
+    // Build dynamic update query
+    const updateFields = []
+    const params = []
+    let paramIndex = 1
+
+    if (title !== undefined) {
+      updateFields.push(`title = $${paramIndex}`)
+      params.push(title)
+      paramIndex++
+    }
+    if (description !== undefined) {
+      updateFields.push(`description = $${paramIndex}`)
+      params.push(description)
+      paramIndex++
+    }
+    if (price !== undefined) {
+      updateFields.push(`price = $${paramIndex}`)
+      params.push(parseFloat(price))
+      paramIndex++
+    }
+    if (location !== undefined) {
+      updateFields.push(`location = $${paramIndex}`)
+      params.push(location)
+      paramIndex++
+    }
+    if (locationLat !== undefined) {
+      updateFields.push(`location_lat = $${paramIndex}`)
+      params.push(locationLat ? parseFloat(locationLat) : null)
+      paramIndex++
+    }
+    if (locationLng !== undefined) {
+      updateFields.push(`location_lng = $${paramIndex}`)
+      params.push(locationLng ? parseFloat(locationLng) : null)
+      paramIndex++
+    }
+    if (categoryId !== undefined) {
+      updateFields.push(`category_id = $${paramIndex}`)
+      params.push(categoryId ? parseInt(categoryId) : null)
+      paramIndex++
+    }
+    if (status !== undefined) {
+      updateFields.push(`status = $${paramIndex}`)
+      params.push(status)
+      paramIndex++
+    }
+
+    // Always update the timestamp
+    updateFields.push('updated_at = CURRENT_TIMESTAMP')
+
+    if (updateFields.length === 1) {
+      return { success: false, error: 'No fields to update' }
+    }
+
+    // Update listing
+    const sql = `
+      UPDATE listings
+      SET ${updateFields.join(', ')}
+      WHERE listing_id = $${paramIndex}
+      RETURNING *
+    `
+    params.push(listingId)
+
+    const result = await query(sql, params)
+
+    return { success: true, listing: result.rows[0] }
+  } catch (error) {
+    console.error('Error updating listing by admin:', error)
     throw error
   }
 }

@@ -103,7 +103,7 @@ sellerRouter.get("/:userId/listings", async (req, res) => {
     }
 
     // Validate status
-    const validStatuses = ['active', 'sold', 'expired', 'pending']
+    const validStatuses = ['active', 'sold', 'expired', 'pending', 'hidden']
     if (options.status && !validStatuses.includes(options.status)) {
       return res.status(400).json({
         success: false,

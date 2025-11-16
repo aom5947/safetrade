@@ -198,10 +198,24 @@ export const getSellerListings = async (sellerId, options = {}) => {
     }
 
     // Status filter
+    // if (status) {
+    //   params.push(status)
+    //   whereConditions.push(`l.status = $${paramIndex}`)
+    //   paramIndex++
+    // }
+    
+    // Status filter
     if (status) {
-      params.push(status)
-      whereConditions.push(`l.status = $${paramIndex}`)
-      paramIndex++
+      if (status === 'pending') {
+        // รวม hidden ด้วย
+        params.push('pending', 'hidden')
+        whereConditions.push(`l.status IN ($${paramIndex}, $${paramIndex + 1})`)
+        paramIndex += 2
+      } else {
+        params.push(status)
+        whereConditions.push(`l.status = $${paramIndex}`)
+        paramIndex++
+      }
     }
 
     const whereClause = whereConditions.join(' AND ')

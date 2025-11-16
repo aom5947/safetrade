@@ -139,3 +139,39 @@ export function requireAnyRole(allowedRoles) {
     next();
   };
 }
+
+/**
+ * Middleware to ensure user has 'admin', 'super_admin', or 'seller' role
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+export function requireAdminOrSeller(req, res, next) {
+  if (!req.user || !['admin', 'super_admin', 'seller'].includes(req.user.role)) {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden: Admin or Seller role required'
+    });
+  }
+  next();
+}
+
+
+export const optionalAuth = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1]
+
+    if (!token) {
+        req.user = null // ไม่มี user
+        return next()
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        req.user = decoded
+        next()
+    } catch (error) {
+        req.user = null
+        next()
+    }
+}

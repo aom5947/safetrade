@@ -22,7 +22,9 @@ const categoryRouter = Router()
  */
 categoryRouter.get("/", async (req, res) => {
   try {
-    const result = await getAllCategories(false)
+    const includeInactive = req.query.includeInactive === 'true'
+    const result = await getAllCategories(includeInactive)
+
 
     return res.status(200).json({
       success: true,

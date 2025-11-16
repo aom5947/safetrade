@@ -228,16 +228,25 @@ userRouter.patch("/edit-profile", jwtTokenMiddleware, async (req, res) => {
   const userId = req.user
   const { username, email, newPassword, phone, first_name, last_name, avatar_url } = req.body
 
-  console.log(phone);
-
-
-  // Validate that at least one field is provided for update
   if (!username && !email && !newPassword && !phone && !first_name && !last_name && !avatar_url) {
     return res.status(400).json({
       success: false,
       message: "ต้องระบุข้อมูลอย่างน้อย 1 ฟิลด์เพื่ออัพเดท"
     })
   }
+
+  console.log(newPassword);
+
+  // Validate password length
+  if (newPassword !== undefined) {
+    if (newPassword.length < PASSWORD_MIN_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: `รหัสผ่านต้องมีอย่างน้อย ${PASSWORD_MIN_LENGTH} ตัวอักษร`
+      });
+    }
+  }
+
 
   try {
     // Hash password if provided

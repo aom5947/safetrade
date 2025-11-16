@@ -11,9 +11,10 @@ import {
   getListingReviews,
   checkIfReviewed,
   markReviewAsSpam,
-  deleteReview
+  deleteReview,
+  getAllReviews
 } from '../controllers/reviewControllers.js'
-import { jwtWithRoleMiddleware, requireAdmin } from '../middlewares/roleMiddleware.js'
+import { jwtWithRoleMiddleware, requireAdmin, optionalAuth } from '../middlewares/roleMiddleware.js'
 
 const reviewRouter = express.Router()
 
@@ -34,6 +35,9 @@ reviewRouter.get("/seller/:sellerId", async (req, res) => {
     const sellerId = parseInt(req.params.sellerId)
     const limit = parseInt(req.query.limit) || 50
     const offset = parseInt(req.query.offset) || 0
+
+    console.log('taseasdadsads');
+    
 
     if (isNaN(sellerId)) {
       return res.status(400).json({
@@ -189,10 +193,9 @@ reviewRouter.post("/", jwtWithRoleMiddleware, async (req, res) => {
  * GET /api/v1/reviews/check/:listingId
  * Check if authenticated user has reviewed a listing
  */
-reviewRouter.get("/check/:listingId", jwtWithRoleMiddleware, async (req, res) => {
+reviewRouter.get("/check/:listingId", optionalAuth, async (req, res) => {
   try {
     const listingId = parseInt(req.params.listingId)
-    const userId = req.user.id
 
     if (isNaN(listingId)) {
       return res.status(400).json({
@@ -201,6 +204,18 @@ reviewRouter.get("/check/:listingId", jwtWithRoleMiddleware, async (req, res) =>
       })
     }
 
+    // ถ้าไม่มี user ให้ return ว่ายังไม่ได้รีวิว
+    if (!req.user) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          hasReviewed: false,
+          review: null
+        }
+      })
+    }
+
+    const userId = req.user.id
     const result = await checkIfReviewed(listingId, userId)
 
     return res.status(200).json({
@@ -210,7 +225,6 @@ reviewRouter.get("/check/:listingId", jwtWithRoleMiddleware, async (req, res) =>
         review: result.review
       }
     })
-
   } catch (error) {
     console.error("Check if reviewed error:", error)
     return res.status(500).json({
@@ -263,6 +277,49 @@ reviewRouter.delete("/:reviewId", jwtWithRoleMiddleware, async (req, res) => {
 // ============================================
 // ADMIN ROUTES
 // ============================================
+
+/**
+ * GET /api/v1/reviews/admin/all
+ * Get all reviews with advanced filtering (admin only)
+ *
+ * Query params:
+ * - limit: number (default 50)
+ * - offset: number (default 0)
+ * - includeSpam: boolean (default true)
+ * - search: string (search in reviewer username, seller username, listing title, or comment)
+ */
+reviewRouter.get("/admin/all", jwtWithRoleMiddleware, requireAdmin, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50
+    const offset = parseInt(req.query.offset) || 0
+    const includeSpam = req.query.includeSpam !== 'false' // Default true for admin
+    const searchTerm = req.query.search || null
+
+    const result = await getAllReviews(limit, offset, includeSpam, searchTerm)
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "ดึงข้อมูลรีวิวทั้งหมดสำเร็จ",
+      data: result.reviews,
+      statistics: result.statistics,
+      pagination: result.pagination
+    })
+
+  } catch (error) {
+    console.error("Get all reviews error:", error)
+    return res.status(500).json({
+      success: false,
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลรีวิว"
+    })
+  }
+})
 
 /**
  * PATCH /api/v1/reviews/:reviewId/spam

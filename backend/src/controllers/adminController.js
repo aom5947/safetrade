@@ -154,6 +154,7 @@ export const createCategory = async (categoryData) => {
  * @param {string} [updateData.name] - Category name
  * @param {string} [updateData.slug] - Category slug
  * @param {string} [updateData.icon] - Category icon
+ * @param {number} [updateData.parentId] - Parent category ID (null for top-level category)
  * @param {number} [updateData.displayOrder] - Display order
  * @param {boolean} [updateData.isActive] - Active status
  * @returns {Promise<Object>} Result object
@@ -165,9 +166,10 @@ export const createCategory = async (categoryData) => {
  *
  * @description
  * Updates an existing category. Checks for slug uniqueness if slug is being updated.
+ * Prevents setting self as parent or creating circular dependencies.
  */
 export const updateCategory = async (categoryId, updateData) => {
-  const { name, slug, icon, displayOrder, isActive } = updateData
+  const { name, slug, icon, parentId, displayOrder, isActive } = updateData
 
   try {
     // If updating slug, check if it already exists
@@ -180,18 +182,53 @@ export const updateCategory = async (categoryId, updateData) => {
       }
     }
 
+    // If updating parentId, validate it
+    if (parentId !== undefined && parentId !== null) {
+      // Check if parent exists
+      const parentCheckSql = 'SELECT category_id FROM categories WHERE category_id = $1'
+      const parentCheckResult = await query(parentCheckSql, [parentId])
+
+      if (parentCheckResult.rowCount === 0) {
+        return { success: false, error: 'Parent category not found' }
+      }
+
+      // Prevent setting self as parent
+      if (parentId === categoryId) {
+        return { success: false, error: 'Cannot set category as its own parent' }
+      }
+
+      // Check if the new parent is a child of this category (prevent circular dependency)
+      const circularCheckSql = 'SELECT category_id FROM categories WHERE parent_id = $1'
+      const circularCheckResult = await query(circularCheckSql, [categoryId])
+
+      for (const child of circularCheckResult.rows) {
+        if (child.category_id === parentId) {
+          return { success: false, error: 'Cannot set a child category as parent (circular dependency)' }
+        }
+      }
+    }
+
     const sql = `
       UPDATE categories
       SET
         name = COALESCE($1, name),
         slug = COALESCE($2, slug),
         icon = COALESCE($3, icon),
-        display_order = COALESCE($4, display_order),
-        is_active = COALESCE($5, is_active)
-      WHERE category_id = $6
+        parent_id = $4,
+        display_order = COALESCE($5, display_order),
+        is_active = COALESCE($6, is_active)
+      WHERE category_id = $7
       RETURNING *
     `
-    const params = [name, slug, icon, displayOrder, isActive, categoryId]
+    const params = [
+      name,
+      slug,
+      icon,
+      parentId !== undefined ? parentId : undefined,
+      displayOrder,
+      isActive,
+      categoryId
+    ]
     const result = await query(sql, params)
 
     if (result.rowCount === 0) {
@@ -277,17 +314,19 @@ export const deleteCategory = async (categoryId) => {
 
 // }
 
-export const getAllUsers = async (searchTerm) => {
+export const getAllUsers = async (searchTerm, userRole) => {
   let sql = `
     SELECT user_id, username, email, first_name, last_name, user_role, status 
     FROM users 
-    WHERE user_role NOT IN ('super_admin', 'admin')
+    WHERE 1=1
   `;
 
   const params = [];
 
-  console.log(searchTerm);
-  
+  // ถ้าไม่ใช่ super_admin ให้กรอง admin และ super_admin ออก
+  if (userRole !== 'super_admin') {
+    sql += ` AND user_role NOT IN ('super_admin', 'admin')`;
+  }
 
   // ถ้ามีการค้นหา
   if (searchTerm && searchTerm.trim() !== '') {
@@ -309,7 +348,7 @@ export const getAllUsers = async (searchTerm) => {
     const result = await query(sql, params);
 
     if (result.rowCount === 0) {
-      return { success: true, data: [] }; // เปลี่ยนเป็น success: true เพราะไม่มีข้อมูลไม่ใช่ error
+      return { success: true, data: [] };
     }
 
     return { success: true, data: result.rows };
@@ -339,6 +378,161 @@ export const updateUserStatus = async (userId, newStatus) => {
     };
   } catch (error) {
     console.error('Error to Update Status:', error)
+    throw error
+  }
+}
+
+/**
+ * Update user profile by admin
+ *
+ * @async
+ * @param {number} userId - User ID to update
+ * @param {Object} updateData - Data to update
+ * @param {string} [updateData.username] - Username
+ * @param {string} [updateData.email] - Email
+ * @param {string} [updateData.firstName] - First name
+ * @param {string} [updateData.lastName] - Last name
+ * @param {string} [updateData.phone] - Phone number
+ * @param {string} [updateData.avatarUrl] - Avatar URL
+ * @param {string} [updateData.status] - Account status (active, suspended, banned)
+ * @param {string} [updateData.userRole] - User role (buyer, seller, admin)
+ * @returns {Promise<Object>} Result object
+ * @returns {boolean} returns.success - Whether update succeeded
+ * @returns {Object} [returns.user] - Updated user data
+ * @returns {string} [returns.error] - Error message if failed
+ *
+ * @throws {Error} If database operation fails
+ *
+ * @description
+ * Updates user profile information. Admin can update any user's profile including role and status.
+ * Validates email and username uniqueness if they are being updated.
+ */
+export const updateUserByAdmin = async (userId, updateData, adminRole) => {
+  const { username, email, firstName, lastName, phone, avatarUrl, status, userRole } = updateData
+
+  try {
+    // Check if user exists
+    const checkSql = 'SELECT user_id FROM users WHERE user_id = $1'
+    const checkResult = await query(checkSql, [userId])
+
+    if (checkResult.rowCount === 0) {
+      return { success: false, error: 'User not found' }
+    }
+
+    // If updating email, check if it already exists
+    if (email) {
+      const emailCheckSql = 'SELECT user_id FROM users WHERE email = $1 AND user_id != $2'
+      const emailCheckResult = await query(emailCheckSql, [email, userId])
+
+      if (emailCheckResult.rowCount > 0) {
+        return { success: false, error: 'Email already exists' }
+      }
+    }
+
+    // If updating username, check if it already exists
+    if (username) {
+      const usernameCheckSql = 'SELECT user_id FROM users WHERE username = $1 AND user_id != $2'
+      const usernameCheckResult = await query(usernameCheckSql, [username, userId])
+
+      if (usernameCheckResult.rowCount > 0) {
+        return { success: false, error: 'Username already exists' }
+      }
+    }
+
+    // Validate status if provided
+    if (status) {
+      const validStatuses = ['active', 'suspended', 'banned']
+      if (!validStatuses.includes(status)) {
+        return { success: false, error: 'Invalid status' }
+      }
+    }
+
+    // Validate role if provided
+    if (userRole) {
+      let validRoles;
+
+      if (adminRole === 'super_admin') {
+        validRoles = ['buyer', 'seller', 'admin'];
+      } else {
+        validRoles = ['buyer', 'seller'];
+      }
+
+      if (!validRoles.includes(userRole)) {
+        if (adminRole !== 'super_admin' && userRole === 'admin') {
+          return { success: false, error: 'Only super admin can set user role to admin' };
+        }
+        return { success: false, error: 'Invalid user role' };
+      }
+    }
+
+    // Build dynamic update query
+    const updateFields = []
+    const params = []
+    let paramIndex = 1
+
+    if (username !== undefined) {
+      updateFields.push(`username = $${paramIndex}`)
+      params.push(username)
+      paramIndex++
+    }
+    if (email !== undefined) {
+      updateFields.push(`email = $${paramIndex}`)
+      params.push(email)
+      paramIndex++
+    }
+    if (firstName !== undefined) {
+      updateFields.push(`first_name = $${paramIndex}`)
+      params.push(firstName)
+      paramIndex++
+    }
+    if (lastName !== undefined) {
+      updateFields.push(`last_name = $${paramIndex}`)
+      params.push(lastName)
+      paramIndex++
+    }
+    if (phone !== undefined) {
+      updateFields.push(`phone = $${paramIndex}`)
+      params.push(phone)
+      paramIndex++
+    }
+    if (avatarUrl !== undefined) {
+      updateFields.push(`avatar_url = $${paramIndex}`)
+      params.push(avatarUrl)
+      paramIndex++
+    }
+    if (status !== undefined) {
+      updateFields.push(`status = $${paramIndex}`)
+      params.push(status)
+      paramIndex++
+    }
+    if (userRole !== undefined) {
+      updateFields.push(`user_role = $${paramIndex}`)
+      params.push(userRole)
+      paramIndex++
+    }
+
+    // Always update the timestamp
+    updateFields.push('updated_at = CURRENT_TIMESTAMP')
+
+    if (updateFields.length === 1) {
+      return { success: false, error: 'No fields to update' }
+    }
+
+    // Update user
+    const sql = `
+      UPDATE users
+      SET ${updateFields.join(', ')}
+      WHERE user_id = $${paramIndex}
+      RETURNING user_id, username, email, first_name, last_name, phone, avatar_url, user_role, status, created_at, updated_at
+    `
+    params.push(userId)
+
+    const result = await query(sql, params)
+
+    console.log(`✅ Admin updated user: ID=${userId}`);
+    return { success: true, user: result.rows[0] }
+  } catch (error) {
+    console.error('Error updating user by admin:', error)
     throw error
   }
 }

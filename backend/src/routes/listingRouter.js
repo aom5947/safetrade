@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express"
-import { jwtWithRoleMiddleware, requireSeller, requireAnyRole, requireAdmin } from "../middlewares/roleMiddleware.js"
+import { jwtWithRoleMiddleware, requireSeller, requireAnyRole, requireAdminOrSeller } from "../middlewares/roleMiddleware.js"
 import {
   createListing,
   getListings,
@@ -14,7 +14,8 @@ import {
   updateListingStatus,
   getSellerListings,
   addListingImages,
-  deleteListingImage
+  deleteListingImage,
+  updateListingByAdmin
 } from "../controllers/listingControllers.js"
 
 const listingRouter = Router()
@@ -39,7 +40,9 @@ listingRouter.get("/", async (req, res) => {
       sort: req.query.sort || 'newest',
       page: req.query.page ? parseInt(req.query.page) : 1,
       limit: req.query.limit ? parseInt(req.query.limit) : 20,
-      status: req.query.status ? 'pending' : 'active'
+      // status: req.query.status ? 'pending' : 'active'
+      status: req.query.status
+      
     }
 
     const result = await getListings(filters)
@@ -192,12 +195,14 @@ listingRouter.get("/my/listings", jwtWithRoleMiddleware, requireSeller, async (r
 /**
  * Update listing
  * PUT /api/v1/listings/:id
- * Body: { title, description, price, location, locationLat, locationLng, categoryId }
+ * Body: { title, description, price, location, locationLat, locationLng, categoryId, status }
+ * Allows sellers to edit their own listings, and admins to edit any listing
  */
-listingRouter.put("/:id", jwtWithRoleMiddleware, requireSeller, async (req, res) => {
+listingRouter.put("/:id", jwtWithRoleMiddleware, requireAdminOrSeller, async (req, res) => {
   try {
     const listingId = parseInt(req.params.id)
-    const { title, description, price, location, locationLat, locationLng, categoryId } = req.body
+    const { title, description, price, location, locationLat, locationLng, categoryId, status } = req.body
+    const isAdmin = ['admin', 'super_admin'].includes(req.user.role)
 
     if (isNaN(listingId)) {
       return res.status(400).json({
@@ -223,7 +228,14 @@ listingRouter.put("/:id", jwtWithRoleMiddleware, requireSeller, async (req, res)
       categoryId: categoryId ? parseInt(categoryId) : undefined
     }
 
-    const result = await updateListing(listingId, req.user.id, updateData)
+    // Admins can also update status
+    if (isAdmin && status !== undefined) {
+      updateData.status = status
+    }
+
+    const result = isAdmin
+      ? await updateListingByAdmin(listingId, updateData)
+      : await updateListing(listingId, req.user.id, updateData)
 
     console.log(result);
 
@@ -254,11 +266,16 @@ listingRouter.put("/:id", jwtWithRoleMiddleware, requireSeller, async (req, res)
  * PATCH /api/v1/listings/:id/status
  * Body: { status }
  */
-listingRouter.patch("/:id/status", jwtWithRoleMiddleware, requireAdmin, async (req, res) => {
+listingRouter.patch("/:id/status", jwtWithRoleMiddleware, requireAdminOrSeller, async (req, res) => {
   try {
     const listingId = parseInt(req.params.id)
-
+    const userId = req.user.id
+    const userRole = req.user.role
     const { status } = req.body
+
+    console.log("User from middleware:", req.user);
+    console.log(userId, userRole);
+
 
     if (isNaN(listingId)) {
       return res.status(400).json({
@@ -274,7 +291,7 @@ listingRouter.patch("/:id/status", jwtWithRoleMiddleware, requireAdmin, async (r
       })
     }
 
-    const result = await updateListingStatus(listingId, req.user.id, status)
+    const result = await updateListingStatus(listingId, userId, status, userRole)
 
     if (!result.success) {
       return res.status(result.error === 'Unauthorized' ? 403 : 400).json({
