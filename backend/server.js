@@ -16,6 +16,8 @@ import reportRouter from "./src/routes/reportRouter.js"
 import conversationRouter from "./src/routes/conversationRouter.js"
 import adminRouter from "./src/routes/adminRouter.js"
 import sellerRouter from "./src/routes/sellerRouter.js"
+import uploadthingHandler from "./routes/uploadthingRouter.js";
+
 
 // uploadthing
 import uploadRouter from "./src/libs/uploadthing.js"
@@ -34,7 +36,10 @@ app.use(
   "/api/uploadthing",
   createRouteHandler({
     router: uploadRouter,
-    config: { uploadthingSecret: process.env.UPLOADTHING_TOKEN },
+    config: {
+      token: process.env.UPLOADTHING_TOKEN,  // 👈 เปลี่ยนจาก uploadthingSecret เป็น token
+      logLevel: "debug",                  // ถ้าอยากดู log เพิ่ม เปิดบรรทัดนี้ได้
+    },
   }),
 );
 
