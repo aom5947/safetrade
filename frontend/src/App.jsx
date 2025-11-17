@@ -103,14 +103,14 @@ function App() {
             }
           />
 
-          {/* <Route
+          <Route
             path="/admin/*"
             element={
               <ProtectedRoute>
                 <AdminLayout />
               </ProtectedRoute>
             }
-          > */}
+          >
             <Route
               index
               element={
