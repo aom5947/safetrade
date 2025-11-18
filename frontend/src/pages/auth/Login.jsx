@@ -31,12 +31,14 @@ function Login({ onSwitch, onSuccess, setToken, setUsers }) {
       localStorage.setItem("user_role", user_role);
 
       if (onSuccess) {
-        alert(response.data.message);
+        toast.success(response.data.message)
+        // alert(response.data.message);
         onSuccess();
       }
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       // alert(error.response?.data?. || "Login failed!");
+      toast.error(error.response?.data.message)
     }
   };
 

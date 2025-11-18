@@ -1,6 +1,5 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
 import { api } from '@/services/api'
 
 const Login = () => {
@@ -22,7 +21,8 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Login error:', error)
-      alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
+      toast.error(error.response?.data.message)
+      // alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
     }
   }
 

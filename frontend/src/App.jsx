@@ -21,6 +21,7 @@ import { Provider } from "./components/provider";
 import { EmptyState } from "./components/Admin_components/EmptyState";
 import NotFound from "./components/NotFound";
 import ShopProfile from "./pages/users/Seller/ShopProfile";
+import ContactListPage from "./components/chat/ContactListPage";
 
 // Lazy load pages
 const UsersPage = React.lazy(() => import('./pages/admin/Users/UsersPage'));
@@ -104,10 +105,19 @@ function App() {
           />
 
           <Route
+            path="/mycontact"
+            element={
+              <Provider>
+                <ContactListPage />
+              </Provider>
+            }
+          />
+
+          <Route
             path="/admin/*"
             element={
               // <ProtectedRoute>
-                <AdminLayout />
+              <AdminLayout />
               // </ProtectedRoute>
             }
           >

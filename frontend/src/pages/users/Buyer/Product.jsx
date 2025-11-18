@@ -13,13 +13,38 @@ import ProductDetails from "@/components/product/ProductDetails";
 import SafetyTips from "@/components/product/SafetyTips";
 import SellerContactCard from "@/components/product/SellerContactCard";
 import GuestContact from "@/components/product/GuestContact";
+import { api } from "@/services/api";
+import { useEffect, useState } from "react";
+import ProductReviewSection from "@/components/shop/review/ProductReviewSection";
 
 function Product() {
     const { productID } = useParams();
     const navigate = useNavigate();
 
-    const { product, isLoading, error } = useProductDetails(productID);
+    const [currentUserId, setCurrentUserId] = useState(null);
+    const { product, isLoading, error, refetch } = useProductDetails(productID);
     const { copyToClipboard, copied } = useClipboard();
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const res = await api.get("/users/verify-token", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (res.data.success) {
+                    setCurrentUserId(res.data.userId);
+                }
+            } catch (error) {
+                console.log("Cannot verify token", error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     if (isLoading) return <LoadingState />;
     if (error || !product) return <ErrorState error={error} onBack={() => navigate("/marketplace")} />;
@@ -29,7 +54,8 @@ function Product() {
         : product.price || "—";
 
     console.log(product, "sadsa");
-    
+
+
 
     return (
         <div className="bg-gray-50">
@@ -40,7 +66,7 @@ function Product() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 bg-white rounded-xl shadow p-6">
                         <ProductImageGallery images={product.images} />
-                        <ProductDetails product={product} priceText={priceText} />
+                        <ProductDetails product={product} priceText={priceText} refetch={refetch} />
                         <GuestContact product={product} />
                         <SafetyTips />
                     </div>
@@ -51,6 +77,11 @@ function Product() {
                         copied={copied}
                     />
                 </div>
+                <ProductReviewSection
+                    product={product}
+                    currentUserId={currentUserId}
+                    userRole={localStorage.getItem('user_role')}
+                />
             </div>
         </div>
     );

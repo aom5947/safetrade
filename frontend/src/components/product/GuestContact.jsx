@@ -1,5 +1,6 @@
 import { api } from '@/services/api';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 const GuestContact = ({ product }) => {
     const [contactName, setContactName] = useState('');
@@ -8,38 +9,51 @@ const GuestContact = ({ product }) => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    const handleSubmit = async () => {
+const handleSubmit = async () => {
         if (!contactName || !contactPhone || !contactEmail) {
-            alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
         }
 
-        
+        // ตรวจสอบเบอร์โทรไทย 10 หลัก
+        if (!/^[0-9]{10}$/.test(contactPhone)) {
+            alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)");
+            return;
+        }
+
         setLoading(true);
 
         try {
-
-            console.log(product.listing_id);
-            
-            await api.post('/guest-contacts', {
+            const res = await api.post("/guest-contacts", {
                 listingId: product.listing_id,
                 contactName: contactName,
                 contactPhone: contactPhone,
                 contactEmail: contactEmail,
                 message: "สนใจสินค้า ราคาต่อได้ไหมคะ"
             });
-            
-            setMessage('ส่งข้อมูลเรียบร้อยแล้ว ขอบคุณที่ติดต่อเรา');
-            setContactName('');
-            setContactPhone('');
-            setContactEmail('');
+
+            setMessage("ส่งข้อมูลเรียบร้อยแล้ว ขอบคุณที่ติดต่อเรา");
+
+            // เคลียร์ฟอร์ม
+            setContactName("");
+            setContactPhone("");
+            setContactEmail("");
+
+            toast.success("ส่งข้อมูลเรียบร้อยแล้ว!");
         } catch (error) {
-            setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
-            console.error(error);
+            console.error("รายละเอียด Error:", error);
+
+            const errorMsg =
+                error?.response?.data?.message ||
+                "เกิดข้อผิดพลาดในการส่งข้อมูล";
+
+            setMessage(errorMsg);
+            toast.error(errorMsg);
         }
 
         setLoading(false);
     };
+
 
     return (
         <>

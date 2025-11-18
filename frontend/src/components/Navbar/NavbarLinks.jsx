@@ -14,6 +14,7 @@ function NavbarLinks({ role }) {
     }, []);
 
     const currentUserId = getUserData();
+    
     if (role === "seller") {
         return (
             <div className="hidden md:flex items-center gap-1">
@@ -29,11 +30,16 @@ function NavbarLinks({ role }) {
                 >
                     หน้าร้านค้า
                 </Link>
-                {/* ทํา outlet  */}
+                <Link
+                    to="/mycontact"
+                    className="px-4 py-2 border rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 font-medium"
+                >
+                    รายการผู้ติดต่อ
+                </Link>
             </div>
         );
     }
-    
+
 
     if (role === "admin") {
         return (
