@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { api } from "@/services/api";
+import { toast } from "sonner";
 
 function Login({ onSwitch, onSuccess, setToken, setUsers }) {
   const [email, setEmail] = useState("");
