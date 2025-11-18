@@ -49,15 +49,15 @@ const navData = [
       { label: 'จัดการประกาศ', link: '/admin/listings' },
     ]
   },
-  {
-    icon: <CreditCard />,
-    label: 'ติดตามปัญหา / ข้อร้องเรียน',
-    menuName: 'disputes',
-    children: [
-      { label: 'รายการข้อร้องเรียน', link: '/admin/disputes' },
-      { label: 'ระบบซัพพอร์ต', link: '/admin/support' },
-    ]
-  },
+  // {
+  //   icon: <CreditCard />,
+  //   label: 'ติดตามปัญหา / ข้อร้องเรียน',
+  //   menuName: 'disputes',
+  //   children: [
+  //     { label: 'รายการข้อร้องเรียน', link: '/admin/disputes' },
+  //     { label: 'ระบบซัพพอร์ต', link: '/admin/support' },
+  //   ]
+  // },
   {
     icon: <User />,
     label: 'หมวดหมู่',
