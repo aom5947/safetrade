@@ -56,7 +56,7 @@ export default function SellerContactCard({ product, copyToClipboard, copied }) 
         try {
             // ขั้นตอนที่ 1: ดึงรายการแชททั้งหมดของผู้ใช้
             const conversationsResponse = await api.get(
-                "http://localhost:3000/api/v1/conversations",
+                "https://testmybackendpower.onrender.com/api/v1/conversations",
                 {
                     headers: { 
                         Authorization: `Bearer ${token}` 
