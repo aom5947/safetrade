@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { api } from "@/services/api";
-import { Button } from "@/components/Admin_components/ui/Button";
+import { Button } from "@/components/Admin_components/ui/button";
 import {
     AlertDialog,
     AlertDialogAction,
