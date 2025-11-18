@@ -231,59 +231,57 @@ export default function SellerContactCard({ product, copyToClipboard, copied }) 
 
                 {/* กรณีที่มีข้อมูลติดต่อ */}
                 {hasSellerContactInfo === true && (
-  <>
-    {/* ถ้ามีเบอร์ก็โชว์เบอร์ไปปกติ */}
-    {hasPhoneNumber === true && (
-      <>
-        <h3>ติดต่อผู้ขาย</h3>
-        <ContactItem
-          label="เบอร์โทร"
-          value={formatPhoneNumber(contactInfo.phone)}
-          copyValue={contactInfo.phone}
-          copyToClipboard={copyToClipboard}
-        />
-      </>
-    )}
+                    <>
+                        {hasPhoneNumber === true && (
+                            <>
+                                <h3>ติดต่อผู้ขาย</h3>
+                                
+                                {/* แสดงเบอร์โทรศัพท์ */}
+                                <ContactItem
+                                    label="เบอร์โทร"
+                                    value={formatPhoneNumber(contactInfo.phone)}
+                                    copyValue={contactInfo.phone}
+                                    copyToClipboard={copyToClipboard}
+                                />
 
-    {/* แชทให้โชว์ตาม canUseChat อย่างเดียว ไม่ผูกกับเบอร์โทรแล้ว */}
-    {canUseChat === true && (
-      <div className="flex items-center justify-between border rounded-lg p-3 mt-3">
-        <p className="text-xs text-gray-500">แชท</p>
-        <div className="flex items-center justify-between gap-2 mt-1">
-          <button
-            onClick={handleCreateOrOpenChat}
-            disabled={isCreatingConversation}
-            className="relative p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group disabled:opacity-50"
-          >
-            {isCreatingConversation ? (
-              <span className="text-xs">กำลังโหลด...</span>
-            ) : (
-              <FaRegCommentDots className="text-xl text-gray-600 group-hover:text-blue-600 transition-colors" />
-            )}
-          </button>
-        </div>
-      </div>
-    )}
+                                {/* ปุ่มเปิดแชท */}
+                                {canUseChat === true && (
+                                    <div className="flex items-center justify-between border rounded-lg p-3">
+                                        <p className="text-xs text-gray-500">แชท</p>
+                                        <div className="flex items-center justify-between gap-2 mt-1">
+                                            <button
+                                                onClick={handleCreateOrOpenChat}
+                                                disabled={isCreatingConversation}
+                                                className="relative p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group disabled:opacity-50"
+                                            >
+                                                {isCreatingConversation === true ? (
+                                                    <span className="text-xs">กำลังโหลด...</span>
+                                                ) : (
+                                                    <FaRegCommentDots className="text-xl text-gray-600 group-hover:text-blue-600 transition-colors" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
-    {/* Modal แชทควรอยู่นอก if hasPhoneNumber */}
-    <ChatModal
-      isOpen={showChat}
-      conversations={conversations}
-      selectedConversation={selectedConversation}
-      messages={messages}
-      input={input}
-      loading={loading}
-      currentUserId={currentUserId}
-      onClose={() => setShowChat(false)}
-      onSelectConversation={handleConversationSelect}
-      onInputChange={setInput}
-      onSendMessage={sendMessage}
-    />
-  </>
-)}
-
-                    {/* </> */}
-                {/* )} */}
+                                {/* Modal สำหรับแชท */}
+                                <ChatModal
+                                    isOpen={showChat}
+                                    conversations={conversations}
+                                    selectedConversation={selectedConversation}
+                                    messages={messages}
+                                    input={input}
+                                    loading={loading}
+                                    currentUserId={currentUserId}
+                                    onClose={() => setShowChat(false)}
+                                    onSelectConversation={handleConversationSelect}
+                                    onInputChange={setInput}
+                                    onSendMessage={sendMessage}
+                                />
+                            </>
+                        )}
+                    </>
+                )}
 
                 {/* ส่วนรายงานประกาศไม่เหมาะสม */}
                 <div>
