@@ -14,8 +14,9 @@ import ProfileSetup from "@/pages/auth/ProfileSetup.jsx";
  * @param {Function} setUsers - function สำหรับ set users
  */
 function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole }) {
-  // ขั้นตอนของ authentication: null (ปิด) | "login" | "signup" | "profile"
+  // ขั้นตอนของ authentication: "login" | "signup" | "profile"
   const [authStep, setAuthStep] = useState("login");
+  const [signupMobile, setSignupMobile] = useState(""); // ⭐ เก็บเบอร์จาก Signup
 
   if (!isOpen) return null;
 
@@ -33,7 +34,9 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
     setAuthStep("signup");
   };
 
-  const handleContinueToProfile = () => {
+  // ⭐ รับ mobile จาก Signup แล้วเก็บไว้ ก่อนจะไปหน้า profile
+  const handleContinueToProfile = (mobile) => {
+    setSignupMobile(mobile || "");
     setAuthStep("profile");
   };
 
@@ -82,11 +85,15 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
         )}
 
         {authStep === "signup" && (
-          <Signup onContinue={handleContinueToProfile} />
+          <Signup
+            onContinue={handleContinueToProfile}            // ✅ รับ mobile จาก Signup
+            onSwitch={() => setAuthStep("login")}
+          />
         )}
 
         {authStep === "profile" && (
           <ProfileSetup
+            mobile={signupMobile}                           // ✅ ส่งเบอร์เข้า ProfileSetup
             onFinish={(user) => handleAuthenticationSuccess(user, "signup")}
           />
         )}
