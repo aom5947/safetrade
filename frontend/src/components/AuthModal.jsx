@@ -16,7 +16,7 @@ import ProfileSetup from "@/pages/auth/ProfileSetup.jsx";
 function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole }) {
   // ขั้นตอนของ authentication: "login" | "signup" | "profile"
   const [authStep, setAuthStep] = useState("login");
-  const [signupMobile, setSignupMobile] = useState(""); // ⭐ เก็บเบอร์จาก Signup
+  const [signupMobile, setSignupMobile] = useState("");  // ⭐ เก็บเบอร์มือถือจาก Signup
 
   if (!isOpen) return null;
 
@@ -34,8 +34,9 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
     setAuthStep("signup");
   };
 
-  // ⭐ รับ mobile จาก Signup แล้วเก็บไว้ ก่อนจะไปหน้า profile
+  // ⭐ รับ mobile จาก Signup แล้วเก็บไว้ ก่อนเปลี่ยนไปหน้า profile
   const handleContinueToProfile = (mobile) => {
+    console.log("📱 ได้เบอร์จาก Signup:", mobile);   // ลองเช็คใน console
     setSignupMobile(mobile || "");
     setAuthStep("profile");
   };
@@ -86,14 +87,14 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
 
         {authStep === "signup" && (
           <Signup
-            onContinue={handleContinueToProfile}            // ✅ รับ mobile จาก Signup
+            onContinue={handleContinueToProfile}   // ⭐ ตอนนี้มือถือจะถูกส่งเข้ามาที่ handleContinueToProfile(mobile)
             onSwitch={() => setAuthStep("login")}
           />
         )}
 
         {authStep === "profile" && (
           <ProfileSetup
-            mobile={signupMobile}                           // ✅ ส่งเบอร์เข้า ProfileSetup
+            mobile={signupMobile}                  // ⭐ ส่งเบอร์เข้าไปใน ProfileSetup (ไม่มีช่องให้แก้ก็ได้)
             onFinish={(user) => handleAuthenticationSuccess(user, "signup")}
           />
         )}

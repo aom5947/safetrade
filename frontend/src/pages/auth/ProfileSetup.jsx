@@ -4,7 +4,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { api } from "@/services/api";   // ✅ ใช้ axios instance ตัวเดียวกับ Login
 
-function ProfileSetup({ onFinish }) {
+function ProfileSetup({ onFinish,mobile }) {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -17,6 +17,7 @@ function ProfileSetup({ onFinish }) {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  console.log("📱 เบอร์ที่ส่งมาจาก Signup:", mobile);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,7 +48,8 @@ function ProfileSetup({ onFinish }) {
       username: form.username,
       first_name: form.firstName,
       last_name: form.lastName,
-      role: form.role, // buyer หรือ seller
+      role: form.role,
+      phone: mobile // buyer หรือ seller
     };
 
     try {
