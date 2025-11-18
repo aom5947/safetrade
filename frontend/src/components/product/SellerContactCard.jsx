@@ -93,7 +93,7 @@ export default function SellerContactCard({ product, copyToClipboard, copied }) 
             console.log("🔵 กำลังสร้างแชทใหม่สำหรับ listing_id:", product.listing_id);
             
             const createConversationResponse = await api.post(
-                "http://localhost:3000/api/v1/conversations",
+                "https://testmybackendpower.onrender.com/api/v1/conversations",
                 { 
                     listingId: product.listing_id 
                 },
@@ -109,7 +109,7 @@ export default function SellerContactCard({ product, copyToClipboard, copied }) 
             // ขั้นตอนที่ 4: ดึงข้อมูล conversations ทั้งหมดอีกครั้ง
             // เพื่อให้ได้ข้อมูลครบถ้วน (listing_title, thumbnail, ฯลฯ)
             const updatedConversationsResponse = await api.get(
-                "http://localhost:3000/api/v1/conversations",
+                "https://testmybackendpower.onrender.com/api/v1/conversations",
                 {
                     headers: { 
                         Authorization: `Bearer ${token}` 
