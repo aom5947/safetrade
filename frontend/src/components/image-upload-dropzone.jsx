@@ -6,7 +6,7 @@ import { Label } from "@/components/Admin_components/ui/label"
 
 // Generate the UploadDropzone component
 const UploadDropzone = generateUploadDropzone({
-    url: "http://localhost:3000/api/uploadthing",
+    url: "https://testmybackendpower.onrender.com/api/uploadthing",
 })
 
 export function ImageUploadDropzone({ maxImages = 18, onImagesChange, initialImages = [], headerText }) {
