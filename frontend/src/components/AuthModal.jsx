@@ -21,6 +21,7 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
 
   const handleBackdropClick = () => {
     onClose();
+    setAuthStep("login"); // reset เวลาเปิดรอบใหม่จะเริ่มที่ login
   };
 
   const handleModalClick = (event) => {
@@ -36,9 +37,16 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
     setAuthStep("profile");
   };
 
-  const handleAuthenticationSuccess = (user) => {
-    setAuthStep("login"); // Reset step สำหรับครั้งถัดไป
-    onAuthSuccess(user);
+  /**
+   * handleAuthenticationSuccess
+   * - mode = "login"  → login สำเร็จ
+   * - mode = "signup" → signup + profile setup สำเร็จ
+   */
+  const handleAuthenticationSuccess = (user, mode) => {
+    setAuthStep("login"); // reset step สำหรับครั้งถัดไป
+    if (onAuthSuccess) {
+      onAuthSuccess(user, mode);
+    }
   };
 
   return (
@@ -52,7 +60,10 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
       >
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            setAuthStep("login");
+          }}
           className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-xl"
           aria-label="Close modal"
         >
@@ -66,7 +77,7 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
             setToken={setToken}
             setRole={setRole}
             onSwitch={handleSwitchToSignup}
-            onSuccess={handleAuthenticationSuccess}
+            onSuccess={(user) => handleAuthenticationSuccess(user, "login")}
           />
         )}
 
@@ -75,7 +86,9 @@ function AuthModal({ isOpen, onClose, onAuthSuccess, setToken, setUsers, setRole
         )}
 
         {authStep === "profile" && (
-          <ProfileSetup onFinish={handleAuthenticationSuccess} />
+          <ProfileSetup
+            onFinish={(user) => handleAuthenticationSuccess(user, "signup")}
+          />
         )}
       </div>
     </div>

@@ -78,10 +78,15 @@ function Landing({ setToken, user, setUsers, setRole, role }) {
    * Handle เมื่อ authentication สำเร็จ
    * นำทางไปยังหน้า marketplace
    */
-  const handleAuthSuccess = (authenticatedUser) => {
-    setIsAuthModalOpen(false);
-    navigate("/marketplace");
-  };
+  const handleAuthSuccess = (authenticatedUser, mode) => {
+  setIsAuthModalOpen(false);
+
+  if (mode === "login") {
+    navigate("/marketplace");   // login แล้วค่อยพาไป
+  }
+  // ถ้า mode === "signup" ก็ไม่ต้อง navigate → อยู่หน้า Landing
+};
+
 
   /**
    * Handle เมื่อคลิกที่หมวดหมู่ย่อย
