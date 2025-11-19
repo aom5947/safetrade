@@ -1,54 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Search } from "lucide-react";
-import { toast } from "sonner";
-
-// ✅ UI: ใช้ตัวเล็กให้ตรงกับไฟล์ใน Admin_components/ui
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/Admin_components/ui/card";
-import { Input } from "@/components/Admin_components/ui/input";
-import { Button } from "@/components/Admin_components/ui/button";
-import { Badge } from "@/components/Admin_components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/Admin_components/ui/table";
-
-// ✅ ใช้ Loading / EmptyState จาก Admin_components (ไม่ใช่ common)
-import { Loading } from "@/components/Admin_components/Loading";
-import { EmptyState } from "@/components/Admin_components/EmptyState";
+import React, { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import { toast } from 'sonner';
+import { Card, CardContent, CardHeader } from '@/components/Admin_components/ui/card';
+import { Input } from '@/components/Admin_components/ui/input';
+import { Button } from '@/components/Admin_components/ui/button';
+import { Badge } from '@/components/Admin_components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/table';
+import { Loading } from '@/components/Admin_components/Loading';
+import { EmptyState } from '@/components/Admin_components/EmptyState';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/Admin_components/ui/select';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/Admin_components/ui/dialog';
+} from "@/components/Admin_components/ui/select"
 
 import { getRoleColor, getRoleDisplayName, getStatusColor, getStatusDisplayName } from '@/lib/utils';
 import { api } from '@/services/api';
+import EditUserDialog from './EditUserDialog';
+import DeleteUserDialog from './DeleteUserDialog';
+import CreateUserDialog from './CreateUserDialog';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-
 
   useEffect(() => {
     fetchUsers();
@@ -69,7 +47,7 @@ const UsersPage = () => {
       setLoading(true);
       const params = debouncedSearch ? { search: debouncedSearch } : {};
 
-      console.log(params);
+      console.log("parma", params);
 
       const response = await api.get('/admin/getalluser', {
         headers: {
@@ -77,9 +55,6 @@ const UsersPage = () => {
         },
         params: params
       });
-
-      console.log(response.data?.users);
-
       setUsers(response.data?.users || []);
     } catch (error) {
       console.error('Error:', error);
@@ -89,16 +64,18 @@ const UsersPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('คุณแน่ใจหรือไม่?')) return;
-    try {
-      await userService.deleteUser(id);
-      toast.success('ลบสำเร็จ');
-      fetchUsers();
-    } catch (error) {
-      toast.error('ไม่สามารถลบได้');
-    }
-  };
+  // ฟังก์ชันสำหรับอัพเดทข้อมูล user ในตาราง
+  const handleUserUpdated = (updatedUser) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.user_id === updatedUser.user_id ? updatedUser : user
+      )
+    )
+  }
+
+  const handleUserDeleted = (userId) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.user_id !== userId))
+  }
 
   const handleStatusChange = async (userId, newStatus) => {
 
@@ -148,6 +125,7 @@ const UsersPage = () => {
               />
             </div>
             <Button onClick={fetchUsers}>ค้นหา</Button>
+            <CreateUserDialog onUserCreated={fetchUsers} />
           </div>
         </CardHeader>
         <CardContent>
@@ -188,7 +166,7 @@ const UsersPage = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="flex items-center justify-end space-x-2">
-                      {user.user_role === "super_admin" && (
+                      {user.user_role === "super_admin" ? (
                         <>
                           <Button
                             size="sm"
@@ -208,18 +186,28 @@ const UsersPage = () => {
                             </SelectContent>
                           </Select>
                         </>
+                      ) : (
+                        <>
+                          <Select onValueChange={(newStatus) => handleStatusChange(user.user_id, newStatus)}>
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder={user.status} />
+                            </SelectTrigger>
+                            <SelectContent className="">
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="suspended">Suspended</SelectItem>
+                              <SelectItem value="banned">Banned</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <EditUserDialog
+                            user={user}
+                            onUserUpdated={handleUserUpdated}
+                          />
+                          <DeleteUserDialog
+                            user={user}
+                            onUserDeleted={handleUserDeleted}
+                          />
+                        </>
                       )}
-
-                      <Select onValueChange={(newStatus) => handleStatusChange(user.user_id, newStatus)}>
-                        <SelectTrigger className="w-24">
-                          <SelectValue placeholder={user.status} />
-                        </SelectTrigger>
-                        <SelectContent className="">
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="suspended">Suspended</SelectItem>
-                          <SelectItem value="banned">Banned</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -231,5 +219,4 @@ const UsersPage = () => {
     </div>
   );
 };
-
 export default UsersPage;

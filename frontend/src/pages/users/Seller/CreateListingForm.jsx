@@ -112,7 +112,7 @@ const CreateListingForm = () => {
                 categoryId: Number.parseInt(data.categoryId),
                 title: data.title,
                 description: data.description || "",
-                price: Number.parseFloat(data.price),
+                price: Number(data.price),
                 location: data.location,
                 images: uploadedImages,
                 phone: data.phone,
@@ -317,7 +317,7 @@ const CreateListingForm = () => {
                         </div>
 
                         {/* เบอร์โทรศัพท์ */}
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             <Label htmlFor="phone">
                                 เบอร์โทรศัพท์ติดต่อ <span className="text-red-500">*</span>
                             </Label>
@@ -336,7 +336,7 @@ const CreateListingForm = () => {
                             />
                             {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
                             <p className="text-xs text-muted-foreground">กรุณาใส่เบอร์โทรที่สามารถติดต่อได้ เพื่อความสะดวกในการซื้อขาย</p>
-                        </div>
+                        </div> */}
 
                         {/* ข้อความเงื่อนไข */}
                         <div className="text-center text-sm text-muted-foreground border-t pt-4">

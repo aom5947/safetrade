@@ -1,6 +1,6 @@
 // ListingFormModal.jsx
 import React, { useState, useEffect } from 'react';
-import { Upload, Trash2 } from 'lucide-react';
+import { Upload, Trash2, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
@@ -13,13 +13,7 @@ import { Input } from '@/components/Admin_components/ui/input';
 import { Button } from '@/components/Admin_components/ui/button';
 import { Label } from '@/components/Admin_components/ui/label';
 import { Textarea } from '@/components/Admin_components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/Admin_components/ui/select';
+import { ImageUploadDropzone } from '@/components/image-upload-dropzone';
 
 const ListingFormModal = ({
   isOpen,
@@ -42,7 +36,13 @@ const ListingFormModal = ({
     images: [],
   });
 
-  const [imageUrls, setImageUrls] = useState([]);
+  console.log(categories, "cat data");
+  
+
+  // ✅ เพิ่ม state สำหรับรูปที่อัปโหลดผ่าน UploadThing
+  const [uploadedImages, setUploadedImages] = useState([]);
+  // State สำหรับรูปที่ใส่ URL เอง
+  const [manualImageUrls, setManualImageUrls] = useState([]);
   const [newImageUrl, setNewImageUrl] = useState('');
 
   // Load initial data for edit mode
@@ -64,7 +64,7 @@ const ListingFormModal = ({
 
       // Set existing images
       if (initialData.images && Array.isArray(initialData.images)) {
-        setImageUrls(initialData.images.map((img) => img.image_url));
+        setManualImageUrls(initialData.images.map((img) => img.image_url));
       }
     }
   }, [mode, initialData]);
@@ -73,7 +73,13 @@ const ListingFormModal = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddImage = () => {
+  // ✅ Handle อัปโหลดรูปจาก UploadThing
+  const handleUploadedImages = (images) => {
+    setUploadedImages(images);
+  };
+
+  // Handle เพิ่มรูปจาก URL
+  const handleAddManualImage = () => {
     if (!newImageUrl.trim()) {
       toast.error('กรุณาใส่ URL รูปภาพ');
       return;
@@ -87,17 +93,24 @@ const ListingFormModal = ({
       return;
     }
 
-    if (imageUrls.includes(newImageUrl)) {
+    if (manualImageUrls.includes(newImageUrl)) {
       toast.error('รูปภาพนี้มีอยู่แล้ว');
       return;
     }
 
-    setImageUrls((prev) => [...prev, newImageUrl]);
+    setManualImageUrls((prev) => [...prev, newImageUrl]);
     setNewImageUrl('');
+    toast.success('เพิ่มรูปภาพสำเร็จ');
   };
 
-  const handleRemoveImage = (index) => {
-    setImageUrls((prev) => prev.filter((_, i) => i !== index));
+  // Handle ลบรูปจาก URL
+  const handleRemoveManualImage = (index) => {
+    setManualImageUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Handle ลบรูปจาก UploadThing
+  const handleRemoveUploadedImage = (index) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -142,8 +155,15 @@ const ListingFormModal = ({
       if (formData.expiresAt) {
         submitData.expiresAt = new Date(formData.expiresAt).toISOString();
       }
-      if (imageUrls.length > 0) {
-        submitData.images = imageUrls;
+
+      // ✅ รวมรูปจากทั้งสองแหล่ง
+      const allImages = [
+        ...uploadedImages.map(img => img.url || img), // UploadThing images
+        ...manualImageUrls // Manual URL images
+      ];
+
+      if (allImages.length > 0) {
+        submitData.images = allImages;
       }
 
       await onSubmit(submitData);
@@ -153,6 +173,12 @@ const ListingFormModal = ({
       setLoading(false);
     }
   };
+
+  // ✅ รวมรูปทั้งหมดสำหรับแสดง preview
+  const allImageUrls = [
+    ...uploadedImages.map(img => img.url || img),
+    ...manualImageUrls
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -165,25 +191,22 @@ const ListingFormModal = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Category */}
-          <div className="space-y-2">
-            <Label>หมวดหมู่</Label>
-            <Select
+          {/* <div className="space-y-2">
+            <Label htmlFor="category">หมวดหมู่</Label>
+            <select
+              id="category"
               value={formData.categoryId}
-              onValueChange={(value) => handleChange('categoryId', value)}
+              onChange={(e) => handleChange('categoryId', e.target.value)}
+              className="w-full h-10 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="เลือกหมวดหมู่" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">ไม่ระบุหมวดหมู่</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.category_id} value={cat.category_id.toString()}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <option value="">ไม่ระบุหมวดหมู่</option>
+              {categories.map((cat) => (
+                <option key={cat.category_id} value={cat.category_id.toString()}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div> */}
 
           {/* Title */}
           <div className="space-y-2">
@@ -237,7 +260,7 @@ const ListingFormModal = ({
           </div>
 
           {/* Coordinates */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="locationLat">ละติจูด</Label>
               <Input
@@ -260,10 +283,10 @@ const ListingFormModal = ({
                 step="any"
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Expires At */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="expiresAt">วันหมดอายุ</Label>
             <Input
               id="expiresAt"
@@ -271,44 +294,115 @@ const ListingFormModal = ({
               value={formData.expiresAt}
               onChange={(e) => handleChange('expiresAt', e.target.value)}
             />
-          </div>
+          </div> */}
 
-          {/* Images */}
-          <div className="space-y-2">
+          {/* Images - ✅ แสดงทั้งสองแบบ */}
+          <div className="space-y-4">
             <Label>รูปภาพ</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="https://uploadthing.com/f/abc123.jpg"
+
+            {/* ✅ Option 1: อัปโหลดผ่าน UploadThing */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <ImagePlus className="h-4 w-4" />
+                <span>อัปโหลดรูปภาพ</span>
+              </div>
+              <ImageUploadDropzone
+                maxImages={6}
+                headerText="อัปโหลดรูปภาพสินค้า (สูงสุด 6 รูป)"
+                onImagesChange={handleUploadedImages}
+                onUploadError={(error) => {
+                  toast.error(`เกิดข้อผิดพลาด: ${error}`);
+                }}
               />
-              <Button type="button" onClick={handleAddImage} variant="outline">
-                <Upload className="h-4 w-4 mr-2" />
-                เพิ่ม
-              </Button>
             </div>
 
-            {/* Image Preview */}
-            {imageUrls.length > 0 && (
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                {imageUrls.map((url, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={url}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-24 object-cover rounded border"
-                    />
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="destructive"
-                      className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
+            {/* ✅ Option 2: ใส่ URL เอง */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Upload className="h-4 w-4" />
+                <span>หรือใส่ URL รูปภาพ</span>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddManualImage();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddManualImage}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  เพิ่ม
+                </Button>
+              </div>
+            </div>
+
+            {/* ✅ Image Preview - แสดงรูปจากทั้งสองแหล่ง */}
+            {allImageUrls.length > 0 && (
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-700">
+                  รูปภาพทั้งหมด ({allImageUrls.length} รูป)
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {/* รูปจาก UploadThing */}
+                  {uploadedImages.map((img, index) => (
+                    <div key={`uploaded-${index}`} className="relative group">
+                      <div className="absolute top-1 left-1 z-10">
+                        <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded">
+                          Upload
+                        </span>
+                      </div>
+                      <img
+                        src={img.url || img}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-24 object-cover rounded border"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleRemoveUploadedImage(index)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+
+                  {/* รูปจาก Manual URL */}
+                  {manualImageUrls.map((url, index) => (
+                    <div key={`manual-${index}`} className="relative group">
+                      <div className="absolute top-1 left-1 z-10">
+                        <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded">
+                          URL
+                        </span>
+                      </div>
+                      <img
+                        src={url}
+                        alt={`Manual ${index + 1}`}
+                        className="w-full h-24 object-cover rounded border"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleRemoveManualImage(index)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

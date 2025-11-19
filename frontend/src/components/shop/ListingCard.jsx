@@ -24,6 +24,13 @@ export default function ListingCard({ listing, tabType }) {
                     </span>
                 );
             }
+            if (listing.status === 'rejected') {
+                return (
+                    <span className="inline-block mt-2 px-2 py-1 bg-red-400 text-gray-100 text-xs rounded">
+                        ปฏิเสธโดยแอดมิน
+                    </span>
+                );
+            }
         }
 
         // แท็บอื่น

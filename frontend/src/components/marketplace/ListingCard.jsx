@@ -66,6 +66,7 @@ const ListingCard = ({ item, isSaved, onToggleFavorite, loading }) => {
 
         <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur px-2 py-1 rounded text-sm font-semibold">
           ฿ {Number(item.price).toLocaleString()}
+          {/* ฿ {Math.floor(listing.price).toLocaleString()} */}
         </div>
 
         <div className="absolute top-2 left-2 text-black backdrop-blur px-2 py-1 rounded text-sm font-semibold">

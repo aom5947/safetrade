@@ -85,11 +85,12 @@ export default function ShopProfile() {
             </div>
         );
     }
+    
 
-    const filteredListings =
-        activeTab === 'statusPending'
-            ? listings.filter(item => item.status === 'pending' || item.status === 'hidden')
-            : listings;
+    // const filteredListings =
+    //     activeTab === 'statusPending'
+    //         ? listings.filter(item => item.status === 'pending' || item.status === 'hidden' || item.status === 'rejected')
+    //         : listings;
 
 
     return (
@@ -132,7 +133,7 @@ export default function ShopProfile() {
                     </>
                 ) : (
                     <>
-                        <ProductsGrid listings={filteredListings} loading={listingsLoading} tabType={activeTab} />
+                        <ProductsGrid listings={listings} loading={listingsLoading} tabType={activeTab} />
 
                         {/* Pagination */}
                         <Pagination

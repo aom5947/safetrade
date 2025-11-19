@@ -18,7 +18,7 @@ export default function AdminLayout() {
                     <header className="h-20 flex justify-between items-center">
                         <SidebarTrigger />
                         <div className="space-x-2">
-                            <span>Your are: admin</span>
+                            <span>Your are: {localStorage.getItem("user_role")}</span>
                         </div>
                     </header>
                     <Outlet />

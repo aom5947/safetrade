@@ -31,14 +31,50 @@ function Profile({ user, setUsers }) {
       try {
         const parsed = JSON.parse(storedData);
         const userData = parsed.user || parsed;
-        setForm(userData);
+
+        // Normalize null values to empty strings for form inputs
+        const normalizedData = {
+          ...userData,
+          phone: userData.phone ?? "",
+          avatar_url: userData.avatar_url ?? "",
+          first_name: userData.first_name ?? "",
+          last_name: userData.last_name ?? "",
+        };
+
+        setForm(normalizedData);
       } catch (err) {
         console.error("Error parsing user data:", err);
       }
     } else if (user) {
-      setForm(user);
+      const normalizedData = {
+        ...user,
+        phone: user.phone ?? "",
+        avatar_url: user.avatar_url ?? "",
+        first_name: user.first_name ?? "",
+        last_name: user.last_name ?? "",
+      };
+      setForm(normalizedData);
     }
   };
+
+  // const initializeUserData = () => {
+  //   const storedData = localStorage.getItem("userData");
+  //   const storedToken = localStorage.getItem("token");
+
+  //   if (storedToken) setToken(storedToken);
+
+  //   if (storedData) {
+  //     try {
+  //       const parsed = JSON.parse(storedData);
+  //       const userData = parsed.user || parsed;
+  //       setForm(userData);
+  //     } catch (err) {
+  //       console.error("Error parsing user data:", err);
+  //     }
+  //   } else if (user) {
+  //     setForm(user);
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,10 +89,8 @@ function Profile({ user, setUsers }) {
       const dataToStore = {
         ...parsed,
         ...updatedUser,
-        user: updatedUser
       };
 
-      if (token) dataToStore.token = token;
       initializeUserData();
       localStorage.setItem("userData", JSON.stringify(dataToStore));
     } catch (err) {
@@ -78,8 +112,6 @@ function Profile({ user, setUsers }) {
     };
 
     try {
-      console.log(token);
-
       if (token) {
         const res = await api.patch("/users/edit-profile", payload, {
           headers: {
@@ -115,6 +147,7 @@ function Profile({ user, setUsers }) {
   const handleLogout = () => {
     localStorage.removeItem("userData");
     localStorage.removeItem("token");
+    localStorage.removeItem("user_role");
     navigate("/");
   };
 
@@ -196,8 +229,6 @@ function ProfileView({ form, onEdit, onLogout }) {
           <p className="text-gray-600">ไอดี {form.user_id}</p>
           <p className="text-gray-600">อีเมล์ {form.email}</p>
           <p className="text-gray-600">เบอร์โทร {form.phone || "-"}</p>
-          <p className="text-sm">วันที่สร้างบัณชี {form.user_role || form.role || "user"}</p>
-          <p className="text-sm">อายุบัณชี {form.user_role || form.role || "user"}</p>
           <p className="text-sm">Role: {form.user_role || form.role || "user"}</p>
         </div>
       </div>

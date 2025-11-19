@@ -30,7 +30,7 @@ const StatusUpdateModal = ({ isOpen, onClose, listing, onUpdateStatus }) => {
     { value: 'active', label: 'Active - แสดงให้ผู้ซื้อเห็น', color: 'bg-green-500' },
     { value: 'sold', label: 'Sold - ขายแล้ว', color: 'bg-gray-500' },
     { value: 'expired', label: 'Expired - หมดอายุ', color: 'bg-red-500' },
-    { value: 'hidden', label: 'Hidden - ซ่อนโดยผู้ขาย', color: 'bg-yellow-500' },
+    { value: 'hidden', label: 'Hidden - ซ่อนชั่วคราว', color: 'bg-yellow-500' },
     { value: 'pending', label: 'Pending - รออนุมัติ', color: 'bg-blue-500' },
     { value: 'rejected', label: 'Rejected - ถูกปฏิเสธ', color: 'bg-red-500' },
   ];
@@ -105,7 +105,7 @@ const StatusUpdateModal = ({ isOpen, onClose, listing, onUpdateStatus }) => {
                 <li><strong>Active:</strong> ประกาศจะแสดงให้ผู้ซื้อเห็นในหน้าค้นหา</li>
                 <li><strong>Sold:</strong> ประกาศจะถูกทำเครื่องหมายว่าขายแล้ว</li>
                 <li><strong>Expired:</strong> ประกาศหมดอายุแล้ว</li>
-                <li><strong>Hidden:</strong> ผู้ขายซ่อนประกาศชั่วคราว</li>
+                <li><strong>Hidden:</strong> ซ่อนประกาศผู้ขายชั่วคราว</li>
                 <li><strong>Pending:</strong> รอการอนุมัติจากแอดมิน</li>
                 <li><strong>Rejected:</strong> ประกาศถูกปฏิเสธโดยแอดมิน</li>
               </ul>

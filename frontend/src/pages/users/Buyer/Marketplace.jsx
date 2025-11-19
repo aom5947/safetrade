@@ -22,8 +22,10 @@ import Pagination from "@/components/marketplace/Pagination";
 import banner1 from "@/assets/banner1.png";
 import banner2 from "@/assets/banner2.png";
 import banner3 from "@/assets/banner3.png";
+import { useNavigate } from "react-router-dom";
+import AuthModal from "@/components/AuthModal";
 
-function Marketplace({ user }) {
+function Marketplace({ setToken, user, setUsers, setRole, role }) {
   // ===== State =====
   const [sort, setSort] = useState("newest");
   const [pagination, setPagination] = useState({
@@ -137,9 +139,42 @@ function Marketplace({ user }) {
 
   const user_role = localStorage.getItem("user_role");
 
+
+  const navigate = useNavigate();
+
+  // สถานะสำหรับ Auth Modal (null = ปิด, "login" = เปิด)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  /**
+   * Handle เมื่อคลิกปุ่ม Signup/Login
+   */
+  const handleAuthButtonClick = () => {
+    setIsAuthModalOpen(true);
+  };
+
+  /**
+   * Handle เมื่อปิด Auth Modal
+   */
+  const handleCloseAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
+
+  /**
+   * Handle เมื่อ authentication สำเร็จ
+   * นำทางไปยังหน้า marketplace
+   */
+  const handleAuthSuccess = (authenticatedUser, mode) => {
+    setIsAuthModalOpen(false);
+
+    if (mode === "login") {
+      navigate("/marketplace");   // login แล้วค่อยพาไป
+    }
+    // ถ้า mode === "signup" ก็ไม่ต้อง navigate → อยู่หน้า Landing
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar role={user_role} />
+      <Navbar role={user_role} handleAuthButtonClick={handleAuthButtonClick} />
 
       <div className="max-w-6xl mx-auto px-6 py-6">
         {/* Breadcrumb */}
@@ -200,6 +235,15 @@ function Marketplace({ user }) {
             {/* Pagination */}
             <Pagination pagination={pagination} onPageChange={handlePageChange} />
           </main>
+          {/* Auth Modal - modal สำหรับ login/signup */}
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={handleCloseAuthModal}
+            onAuthSuccess={handleAuthSuccess}
+            setToken={setToken}
+            setUsers={setUsers}
+            setRole={setRole}
+          />
         </div>
       </div>
     </div>

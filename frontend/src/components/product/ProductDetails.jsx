@@ -177,26 +177,32 @@ export default function ProductDetails({ product, priceText, refetch, categories
         }
     };
 
+    console.log(priceText);
+
     return (
         <div className="mt-6">
             {/* หัวข้อสินค้า */}
             <div>
                 <h2 className="text-2xl font-bold">{product.title}</h2>
                 <p className="text-3xl font-bold text-blue-600 my-2">
-                    ฿ {Number(priceText).toLocaleString()}
+                    {/* ฿ {Number(priceText).toLocaleString()} */}
+                    ฿ {priceText?.toLocaleString() ?? "—"}
                 </p>
             </div>
 
             {/* แสดงสถานะปัจจุบัน */}
             <h2
-                className={`mt-4 w-fit font-bold px-2 py-1 rounded-md text-white transition-all duration-300 ${
-                    status?.color || "bg-gray-300"
-                }`}
+                className={`mt-4 w-fit font-bold px-2 py-1 rounded-md text-white transition-all duration-300 ${status?.color || "bg-gray-300"
+                    }`}
             >
                 สถานะสินค้า: {status?.label || "ไม่ทราบสถานะ"}
             </h2>
 
-            {status.value !== "pending" && status.value !== "sold" && role === "seller" && (
+            {status === 'active' && (
+                <p className="mt-4 px-2 text-sm text-gray-700">อนุมัติโดย: {product.approved_by}</p>
+            )}
+
+            {status.value !== "pending" && status.value !== "rejected" && status.value !== "sold" && role === "seller" && (
                 <div className="flex flex-col gap-3 mt-3">
                     <div className="flex gap-y-2 flex-col md:flex-row md:items-center md:gap-2">
                         <select
@@ -213,9 +219,8 @@ export default function ProductDetails({ product, priceText, refetch, categories
                         <Button
                             onClick={changeProductStatus}
                             disabled={isUpdating}
-                            className={`bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 ${
-                                isUpdating ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
+                            className={`bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 ${isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
                         >
                             {isUpdating ? "กำลังอัปเดต..." : "เปลี่ยนสถานะสินค้า"}
                         </Button>

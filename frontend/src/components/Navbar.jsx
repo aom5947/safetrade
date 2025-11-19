@@ -7,7 +7,7 @@ import NavbarLinks from "./Navbar/NavbarLinks";
 import NavbarActions from "./Navbar/NavbarActions";
 import MobileDrawer from "./Navbar/MobileDrawer";
 
-function Navbar({ role }) {
+function Navbar({ role, handleAuthButtonClick }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const {
@@ -25,6 +25,8 @@ function Navbar({ role }) {
     handleConversationSelect,
     sendMessage,
   } = useChat(role);
+
+  const token = localStorage.getItem('token')
 
   return (
     <>
@@ -45,6 +47,16 @@ function Navbar({ role }) {
               onChatClick={handleChatClick}
               onMenuToggle={() => setMenuOpen(!menuOpen)}
             />
+
+            {token ? null : (
+              <button
+                onClick={handleAuthButtonClick}
+                className="bg-white text-blue-700 px-6 py-2 rounded-full shadow hover:scale-110 hover:shadow-xl transition text-sm font-semibold"
+              >
+                Signup / Login
+              </button>
+
+            )}
           </div>
         </div>
       </nav>

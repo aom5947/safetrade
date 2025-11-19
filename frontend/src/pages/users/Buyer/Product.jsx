@@ -49,17 +49,19 @@ function Product() {
     if (isLoading) return <LoadingState />;
     if (error || !product) return <ErrorState error={error} onBack={() => navigate("/marketplace")} />;
 
+    // const priceText = typeof product.price === "number"
+    //     ? `฿ ${product.price.toLocaleString()}`
+    //     : product.price || "—";
     const priceText = typeof product.price === "number"
-        ? `฿ ${product.price.toLocaleString()}`
-        : product.price || "—";
+        ? product.price
+        : Number(product.price) || null;
 
-    console.log(product, "sadsa");
-
+    console.log(priceText);
 
 
     return (
         <div className="bg-gray-50">
-            <Navbar role="buyer" />
+            <Navbar role={localStorage.getItem('user_role')} />
             <div className="max-w-5xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold mb-6">รายละเอียดสินค้า</h1>
 

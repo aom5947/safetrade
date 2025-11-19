@@ -32,14 +32,14 @@ import { Button } from "@/components/Admin_components/ui/button";
 // ];
 
 const navData = [
-  {
-    icon: <BarChart2 />,
-    label: 'Dashboard / Analytics',
-    menuName: 'dashboard',
-    children: [
-      { label: 'ดูยอดขายทั้งหมด', link: '/admin/' },
-    ]
-  },
+  // {
+  //   icon: <BarChart2 />,
+  //   label: 'Dashboard / Analytics',
+  //   menuName: 'dashboard',
+  //   children: [
+  //     { label: 'ดูยอดขายทั้งหมด', link: '/admin/' },
+  //   ]
+  // },
   {
     icon: <AlertCircle />,
     label: 'รายงาน',
@@ -47,6 +47,7 @@ const navData = [
     children: [
       { label: 'รายงานประกาศ', link: '/admin/reports' },
       { label: 'จัดการประกาศ', link: '/admin/listings' },
+      { label: 'จัดการรีวิว', link: '/admin/reviews' },
     ]
   },
   // {
@@ -74,6 +75,15 @@ const navData = [
       { label: 'จัดการผู้ใช้งาน', link: '/admin/users/' },
     ]
   },
+  {
+    icon: <User />,
+    label: 'หน้าหลัก',
+    menuName: 'users',
+    children: [
+      { label: 'หน้าประกาศ', link: '/marketplace' },
+      { label: 'หน้าแรกของเว็บไซต์', link: '/' },
+    ]
+  },
 ];
 
 
@@ -84,10 +94,10 @@ export function AppSidebar({ role, setToken, setRole, setUserData }) {
   const handleLogout = () => {
     // ล้างข้อมูลใน localStorage
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.removeItem("user_role");
     localStorage.removeItem("userData");
 
-    navigate("/login");
+    navigate("/");
   };
 
   // if (isMobile) {
@@ -171,7 +181,7 @@ export function AppSidebar({ role, setToken, setRole, setUserData }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 />
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -180,10 +190,10 @@ export function AppSidebar({ role, setToken, setRole, setUserData }) {
                 className="w-[--radix-popper-anchor-width]"
               >
                 <DropdownMenuItem>
-                  <Link to="/profile-admin">Account</Link>
+                  <Link to="/profile" className='w-full text-center p-[0.65rem] bg-green-500 text-white font-semibold rounded-md'>Account</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Button onClick={handleLogout} variant="ghost">Sign out</Button>
+                <DropdownMenuItem>
+                  <Button onClick={handleLogout} className='w-full bg-red-500 hover:bg-gray-500'>Sign out</Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

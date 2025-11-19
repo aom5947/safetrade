@@ -74,7 +74,12 @@ function App() {
             path="/marketplace"
             element={
               <Provider>
-                <Marketplace role={role} user={user} />
+                <Marketplace
+                  user={user}
+                  setUsers={setUsers}
+                  setToken={setToken}
+                  setRole={setRole}
+                />
               </Provider>
             }
           />

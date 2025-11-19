@@ -1,41 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import {
-  Folder,
-  Plus,
-  ChevronDown,
-  ChevronRight,
-  Edit2,
-  Trash2,
-  Save,
-  X,
-} from 'lucide-react';
+import { Folder, Plus, ChevronDown, ChevronRight, Edit2, Trash2, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
-
-// ✅ ui/* = ชื่อไฟล์ตัวเล็ก (card.jsx, button.jsx, badge.jsx, table.jsx, input.jsx)
-import { Card, CardContent } from '@/components/Admin_components/ui/card';
-import { Button } from '@/components/Admin_components/ui/button';
-import { Badge } from '@/components/Admin_components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/Admin_components/ui/table';
-import { Input } from '@/components/Admin_components/ui/input';
-
-// ✅ Components ที่อยู่นอก ui (ใช้ตามที่มีอยู่จริง)
+import { Card, CardContent } from '@/components/Admin_components/ui/Card';
+import { Button } from '@/components/Admin_components/ui/Button';
+import { Badge } from '@/components/Admin_components/ui/Badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Admin_components/ui/Table';
 import { Loading } from '@/components/Admin_components/Loading';
 import { EmptyState } from '@/components/Admin_components/EmptyState';
-
-// ✅ Modal อยู่ใน ui แต่ไฟล์ชื่อ Modal.jsx (M ใหญ่)
 import { Modal } from '@/components/Admin_components/ui/Modal';
-
+import { Input } from '@/components/Admin_components/ui/Input';
 import { useForm } from 'react-hook-form';
 import { api } from '@/services/api';
 
+// แสดงสถานะทั้งหมด
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -45,7 +23,7 @@ const CategoriesPage = () => {
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [editingCategory, setEditingCategory] = useState(null); // สำหรับโหมด Edit
   const [isEditMode, setIsEditMode] = useState(false); // ระบุว่าเป็น Create หรือ Edit
-  
+
   const { register, handleSubmit, reset, setValue } = useForm();
   const abortControllerRef = useRef(null);
 
@@ -67,7 +45,9 @@ const CategoriesPage = () => {
     abortControllerRef.current = controller;
 
     try {
-      const response = await api.get('/categories', { signal: controller.signal });
+      const response = await api.get('/categories?includeInactive=true', { signal: controller.signal });
+      console.log(response);
+
       const cats = response?.data?.categories ?? [];
       setCategories(cats);
     } catch (err) {
@@ -103,7 +83,7 @@ const CategoriesPage = () => {
   const handleOpenEditModal = (category) => {
     setIsEditMode(true);
     setEditingCategory(category);
-    
+
     // ตั้งค่าเริ่มต้นใน form
     setValue('name', category.name);
     setValue('slug', category.slug);
@@ -111,7 +91,7 @@ const CategoriesPage = () => {
     setValue('parent_id', category.parent_id || '');
     setValue('display_order', category.display_order || '');
     setValue('is_active', category.is_active);
-    
+
     setShowModal(true);
   };
 
@@ -127,7 +107,7 @@ const CategoriesPage = () => {
             name: formData.name,
             slug: formData.slug,
             icon: formData.icon,
-            parent_id: formData.parent_id || null,
+            parentId: formData.parent_id ? parseInt(formData.parent_id) : null,
             displayOrder: formData.display_order ? parseInt(formData.display_order) : null,
             isActive: formData.is_active !== false, // default true
           },
@@ -146,7 +126,7 @@ const CategoriesPage = () => {
             name: formData.name,
             slug: formData.slug,
             icon: formData.icon,
-            parent_id: formData.parent_id || null,
+            parentId: formData.parent_id ? parseInt(formData.parent_id) : null,
             displayOrder: formData.display_order ? parseInt(formData.display_order) : null,
             isActive: formData.is_active !== false,
           },
@@ -158,15 +138,15 @@ const CategoriesPage = () => {
         );
         toast.success('สร้างหมวดหมู่สำเร็จ');
       }
-      
+
       setShowModal(false);
       reset();
       setEditingCategory(null);
       fetchCategories();
     } catch (err) {
       console.error(err);
-      const errorMsg = isEditMode 
-        ? 'ไม่สามารถอัพเดทหมวดหมู่ได้' 
+      const errorMsg = isEditMode
+        ? 'ไม่สามารถอัพเดทหมวดหมู่ได้'
         : 'ไม่สามารถสร้างหมวดหมู่ได้';
       toast.error(err?.response?.data?.message || errorMsg);
     } finally {
@@ -177,7 +157,7 @@ const CategoriesPage = () => {
   // ลบหมวดหมู่
   const handleDelete = async (id) => {
     if (!confirm('คุณแน่ใจหรือไม่ที่จะลบหมวดหมู่นี้?')) return;
-    
+
     try {
       await api.delete(`/admin/categories/${id}`, {
         headers: {
@@ -205,7 +185,7 @@ const CategoriesPage = () => {
             Authorization: `Bearer ${token}`,
           },
         }
-      );      
+      );
 
       toast.success('เปลี่ยนสถานะสำเร็จ');
       fetchCategories();
@@ -224,6 +204,11 @@ const CategoriesPage = () => {
     return (
       <React.Fragment key={cat.category_id}>
         <TableRow className="hover:bg-gray-50 transition-colors">
+          <TableCell>
+            <code className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700">
+              {cat.category_id}
+            </code>
+          </TableCell>
           <TableCell className="font-medium">
             <div style={{ marginLeft: level * 24 }} className="flex items-center gap-2">
               {hasChildren ? (
@@ -246,23 +231,23 @@ const CategoriesPage = () => {
               <span className="text-gray-900">{cat.name}</span>
             </div>
           </TableCell>
-          
+
           <TableCell>
             <code className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700">
               {cat.slug}
             </code>
           </TableCell>
-          
+
           <TableCell className="text-center">
             {cat.display_order || '-'}
           </TableCell>
-          
+
           <TableCell>
             <button
               onClick={() => handleToggleActive(cat)}
               className="cursor-pointer"
             >
-              <Badge 
+              <Badge
                 variant={cat.is_active ? 'success' : 'secondary'}
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
@@ -270,7 +255,7 @@ const CategoriesPage = () => {
               </Badge>
             </button>
           </TableCell>
-          
+
           <TableCell className="text-right">
             <div className="flex justify-end gap-2">
               <Button
@@ -343,6 +328,9 @@ const CategoriesPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50 border-b-2 border-gray-200">
+                      <TableHead className="font-semibold text-gray-700">
+                        id
+                      </TableHead>
                       <TableHead className="font-semibold text-gray-700">
                         ชื่อหมวดหมู่
                       </TableHead>

@@ -41,11 +41,11 @@ function NavbarLinks({ role }) {
     }
 
 
-    if (role === "admin") {
+    if (role === "admin" || role === "super_admin") {
         return (
             <div className="hidden md:flex items-center gap-1">
                 <Link
-                    to="/admin"
+                    to="/admin/listings"
                     className="px-4 py-2 border rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200 font-medium"
                 >
                     Go to Admin Page

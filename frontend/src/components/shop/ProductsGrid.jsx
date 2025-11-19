@@ -11,25 +11,14 @@ export default function ProductsGrid({ listings, loading, tabType }) {
         );
     }
 
-    let filteredListings = listings;
-if (tabType === 'statusPending') {
-    filteredListings = listings.filter(
-        (item) => item.status === 'pending' || item.status === 'hidden'
-    );
-}
-
-
-
-    if (filteredListings.length === 0) {
+    // ลบการ filter ออก ใช้ listings โดยตรง
+    if (listings.length === 0) {
         return <EmptyState message="ไม่พบสินค้า" />;
     }
 
-    console.log(listings);
-
-
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredListings.map((listing) => (
+            {listings.map((listing) => (
                 <ListingCard key={listing.listing_id} listing={listing} tabType={tabType} />
             ))}
         </div>
